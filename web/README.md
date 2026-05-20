@@ -25,8 +25,8 @@ web/
 
 ```bash
 # 在项目根目录执行
-# 1. 克隆 OpenCV（只需一次）
-git clone --depth 1 --branch 4.11.0 https://github.com/opencv/opencv.git opencv4
+# 1. 下载依赖（只需一次）
+bash setup.sh
 
 # 2. 启动 emscripten 容器并运行构建脚本
 docker run --rm \
