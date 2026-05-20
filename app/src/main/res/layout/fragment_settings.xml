@@ -273,7 +273,7 @@
                     android:id="@+id/tv_opensource_link"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="github.com/fayfoxcat/cfc"
+                    android:text="github.com/fayfoxcat/air-ferry"
                     android:textColor="@color/colorPrimary"
                     android:clickable="true"
                     android:focusable="true"

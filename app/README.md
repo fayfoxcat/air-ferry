@@ -38,11 +38,11 @@ bash build.sh release   # release APK
 
 ```
 app/src/
-├── main/java/cc/asac/cimbar/   # Java 层
-│   ├── ReceiverFragment.java   #   相机帧回调 → JNI
-│   ├── SettingsFragment.java   #   设置页面
+├── main/java/cc/asac/airferry/  # Java 层
+│   ├── ReceiverFragment.java    #   相机帧回调 → JNI
+│   ├── SettingsFragment.java    #   设置页面
 │   └── ...
-└── cpp/                        # C++ 层
+└── cpp/                         # C++ 层
     ├── CMakeLists.txt           #   顶层 CMake（引用 libcimbar 各模块）
     ├── cfc-cpp/
     │   ├── jni.cpp              #   JNI 入口 + decode pipeline + 角标绘制

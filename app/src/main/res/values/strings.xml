@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cimbar</string>
+    <string name="app_name">AirFerry</string>
     <string name="tab_receiver">Receive</string>
     <string name="tab_settings">Settings</string>
 
@@ -15,7 +15,7 @@
     <string name="upload_success">Upload successful</string>
     <string name="upload_failed">Upload failed</string>
 
-    <string name="about_text">Cimbar is an open-source optical data transfer tool. It uses animated barcodes to transmit files via camera — no WiFi, Bluetooth, or NFC needed.</string>
+    <string name="about_text">AirFerry is an open-source optical data transfer tool. It uses animated barcodes to transmit files via camera — no WiFi, Bluetooth, or NFC needed.</string>
     <string name="scan_hint">Point camera at color-block QR code to receive files</string>
 
     <!-- Language options (displayed in radio buttons) -->

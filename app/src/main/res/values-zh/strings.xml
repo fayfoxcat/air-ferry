@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cimbar</string>
+    <string name="app_name">AirFerry</string>
     <string name="tab_receiver">文件接收</string>
     <string name="tab_settings">设置</string>
 
@@ -15,7 +15,7 @@
     <string name="upload_success">上传成功</string>
     <string name="upload_failed">上传失败</string>
 
-    <string name="about_text">Cimbar 是一个开源的光学数据传输工具。通过动态条码利用摄像头传输文件——无需 WiFi、蓝牙或 NFC。</string>
+    <string name="about_text">AirFerry是一个开源的光学数据传输工具。通过动态条码利用摄像头传输文件——无需 WiFi、蓝牙或 NFC。</string>
     <string name="scan_hint">对准色块二维码接收文件</string>
 
     <!-- Language options (displayed in radio buttons) -->

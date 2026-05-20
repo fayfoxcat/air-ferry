@@ -1,9 +1,9 @@
 /**
- * main.js — Cimbar Web Encoder front-end
+ * main.js — AirFerry Web Encoder front-end
  *
- * Depends on cimbar_js.js (Emscripten-generated, USE_WASM=2 single-file build).
+ * Depends on cimbar_js.js (libcimbar Emscripten-generated, USE_WASM=2 single-file build).
  *
- * C API used (encoder-only, exported by cimbar_js.cpp):
+ * C API used (encoder-only, exported by libcimbar cimbar_js.cpp):
  *   cimbare_configure(mode_val, compression)  → int
  *   cimbare_init_encode(fnPtr, fnLen, encId)  → int
  *   cimbare_encode_bufsize()                  → int
@@ -18,7 +18,7 @@
 // ─── Patch GLFW passive event listeners ──────────────────────────────────────
 // Emscripten's GLFW implementation registers touchstart/touchmove/wheel/
 // mousewheel without { passive: true }, triggering Chrome [Violation] warnings
-// and hurting scroll performance. Since cimbar_js.js is a compiled artifact we
+// and hurting scroll performance. Since cimbar_js.js is a libcimbar compiled artifact we
 // cannot edit it directly; instead we patch EventTarget.addEventListener before
 // the WASM module loads so that these specific scroll-blocking events are always
 // registered as passive when the listener does not explicitly call
@@ -93,7 +93,7 @@ function ensureCanvas(w, h) {
   if (!_canvas) {
     _canvas = document.createElement('canvas');
     _canvas.setAttribute('role', 'img');
-    _canvas.setAttribute('aria-label', 'Cimbar 编码帧预览');
+    _canvas.setAttribute('aria-label', 'AirFerry 编码帧预览');
     // Hide placeholder and append canvas
     if (elPlaceholder) elPlaceholder.style.display = 'none';
     elCanvasWrap.appendChild(_canvas);
@@ -110,15 +110,15 @@ function onModuleReady(mod) {
   Module = mod;
   elLoading.classList.add('hidden');
   setStatus('WASM 模块已就绪', 'ok');
-  console.log('[cimbar] WASM module ready');
+  console.log('[airferry] WASM module ready');
   // Fire event for header badge
-  document.dispatchEvent(new Event('cimbar:ready'));
+  document.dispatchEvent(new Event('airferry:ready'));
   // Enable encode button if a file is already selected
   if (_file) elBtnEncode.disabled = false;
 }
 
-// main.js loads BEFORE cimbar_js.js (see index.html script order).
-// cimbar_js.js does: var Module = typeof Module != "undefined" ? Module : {}
+// main.js loads BEFORE cimbar_js.js (libcimbar compiled output, see index.html script order).
+// cimbar_js.js (from libcimbar) does: var Module = typeof Module != "undefined" ? Module : {}
 // So we pre-populate the global Module object with our callbacks here.
 // We must NOT reassign Module (window.Module = {...}) because that would
 // create a new object; instead we set properties on the existing var.
@@ -126,11 +126,11 @@ Module = {
   onRuntimeInitialized: function () {
     onModuleReady(Module);
   },
-  print:    function (s) { console.debug('[cimbar]', s); },
-  printErr: function (s) { console.warn('[cimbar]', s); },
+  print:    function (s) { console.debug('[airferry]', s); },
+  printErr: function (s) { console.warn('[airferry]', s); },
   // GLFW requires Module.canvas to exist before glfwInit().
   // We provide a hidden offscreen canvas; actual frame rendering is done
-  // by reading raw pixel data via cimbare_get_frame_buff() into our own canvas.
+  // by reading raw pixel data via libcimbar's cimbare_get_frame_buff() into our own canvas.
   canvas: (function () {
     const c = document.createElement('canvas');
     c.id = '_cimbar_glfw_canvas';
@@ -205,12 +205,12 @@ async function startEncode() {
 
   // 1. Configure
   // cimbare_configure() also tries to create a GLFW/WebGL window for rendering.
-  // In the encoder-only (USE_WASM=2) build we use cimbare_get_frame_buff() to
+  // In the encoder-only (USE_WASM=2) build we use libcimbar's cimbare_get_frame_buff() to
   // read raw pixel data directly, so a window is not required.  We tolerate a
   // negative return value here (window creation may fail in headless contexts).
   const cfgRes = Module._cimbare_configure(modeVal, compression);
   if (cfgRes < 0) {
-    console.warn('[cimbar] configure returned', cfgRes,
+    console.warn('[airferry] configure returned', cfgRes,
       '— window creation may have failed; continuing without WebGL window.');
   }
 
@@ -312,7 +312,7 @@ function renderFrame() {
   }
 
   // Get raw pixel buffer from the generated cv::Mat
-  // cimbare_get_frame_buff writes the pointer into a HEAPU32 slot
+  // libcimbar's cimbare_get_frame_buff writes the pointer into a HEAPU32 slot
   const ptrSlot = Module._malloc(4);
   const byteLen = Module._cimbare_get_frame_buff(ptrSlot);
   const imgPtr  = Module.HEAPU32[ptrSlot >> 2];

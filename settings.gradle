@@ -18,7 +18,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = 'Cimbar'
+rootProject.name = 'AirFerry'
 
 // Read opencvsdk from local.properties, fallback to OPENCV_SDK env var
 def localProperties = new File(rootDir, 'local.properties')

@@ -1,6 +1,4 @@
-### [INTRODUCTION](https://github.com/sz3/cimbar) | [ABOUT](https://github.com/sz3/cimbar/blob/master/ABOUT.md) | CFC | [LIBCIMBAR](https://github.com/sz3/libcimbar)
-
-## CameraFileCopy（二次开发版）
+# AirFerry（AirFerry）
 
 本项目 fork 自 [sz3/cfc](https://github.com/sz3/cfc)，在上游基础上进行了功能扩展与体验优化。
 
@@ -21,7 +19,7 @@
 ## 目录结构
 
 ```
-cfc/
+air-ferry/
 ├── setup.sh              # 一键初始化（下载 libcimbar + OpenCV）
 ├── build.sh              # Android 构建脚本
 ├── app/                  # Android 接收端 ← app/README.md
@@ -44,7 +42,7 @@ cfc/
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/fayfoxcat/air-ferry.git
-cd cfc
+cd air-ferry
 
 # 2. 下载依赖
 bash setup.sh
@@ -58,7 +56,7 @@ bash setup.sh
 ### 针对 app（Android 接收端）
 
 - **移除发送端**：仅保留接收端
-- **包名更改**：`org.cimbar.camerafilecopy` → `cc.asac.cimbar`
+- **包名更改**：`org.cimbar.camerafilecopy` → `cc.asac.airferry`
 - **多语言支持**：中文 / 英文可切换
 - **文件接收方式**：本地保存 + HTTP POST 上传
 - **UI 重构**：底部导航栏（接收/设置），Edge-to-edge 全面屏
@@ -83,7 +81,7 @@ Release APK 在 [Releases 页面](../../releases) 下载。仅支持 **arm64-v8a
 
 | 组件 | 许可证 |
 |---|---|
-| 本项目（cfc） | MIT |
+| 本项目（AirFerry） | MIT |
 | libcimbar | MPL 2.0 |
 | libcimbar 依赖库 | MIT、BSD、zlib、Boost、Apache |
 | OpenCV | Apache 2.0 |

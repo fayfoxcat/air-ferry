@@ -1,6 +1,6 @@
 # web/ — WASM 编码端
 
-基于 libcimbar 的 `cimbar_js` 构建，将文件编码为 cimbar 彩色矩阵条码动画，在浏览器中运行，无需安装任何软件。
+基于 libcimbar 的 `cimbar_js` 构建，在浏览器中将文件编码为 cimbar 彩色矩阵条码动画，无需安装任何软件。
 
 输出文件通过 `cimbare_get_frame_buff()` 直接读取原始 RGB 像素渲染到 Canvas，不依赖 GLFW/WebGL 窗口。
 

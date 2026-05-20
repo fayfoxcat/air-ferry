@@ -5,7 +5,7 @@
     android:background="#000000">
 
     <!-- Camera preview -->
-    <cc.asac.cimbar.OpencvCameraView
+    <cc.asac.airferry.OpencvCameraView
         android:id="@+id/main_surface"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -52,14 +52,14 @@
     </LinearLayout>
 
     <!-- Scan corners + animated scan line overlay, centered in the camera view -->
-    <cc.asac.cimbar.ScanCornersView
+    <cc.asac.airferry.ScanCornersView
         android:id="@+id/scan_corners"
         android:layout_width="280dp"
         android:layout_height="280dp"
         android:layout_gravity="center" />
 
     <!-- Circular progress (speed indicator) — symmetric to mode_switch on the left -->
-    <cc.asac.cimbar.CircularProgressView
+    <cc.asac.airferry.CircularProgressView
         android:id="@+id/circular_progress"
         android:layout_width="65dp"
         android:layout_height="65dp"
@@ -67,7 +67,7 @@
         android:layout_margin="20dp" />
 
     <!-- Mode toggle button -->
-    <cc.asac.cimbar.ModeSelToggle
+    <cc.asac.airferry.ModeSelToggle
         android:id="@+id/mode_switch"
         android:layout_width="48dp"
         android:layout_height="54dp"

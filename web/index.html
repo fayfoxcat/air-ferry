@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cimbar 编码器</title>
+  <title>AirFerry 编码器</title>
 
   <link rel="icon" type="image/png" href="favicon.png" />
   <style>
@@ -528,8 +528,8 @@
 
       <!-- Header -->
       <div id="sidebar-header">
-        <h1>Cimbar 编码器</h1>
-        <div class="header-sub">彩色矩阵条码 · 空气隔离传输</div>
+        <h1>AirFerry 编码器</h1>
+        <div class="header-sub">彩色矩阵条码 · AirFerry文件传输</div>
         <div class="header-badge">
           <span class="badge-dot loading" id="wasm-dot"></span>
           <span id="wasm-status-text">加载 WASM 中…</span>
@@ -647,8 +647,8 @@
       const dot  = document.getElementById('wasm-dot');
       const text = document.getElementById('wasm-status-text');
       // Poll until Module is ready (onModuleReady sets status)
-      const _origOnReady = window.__cimbarOnReady;
-      document.addEventListener('cimbar:ready', () => {
+      const _origOnReady = window.__airferryOnReady;
+      document.addEventListener('airferry:ready', () => {
         dot.classList.remove('loading');
         text.textContent = 'WASM 已就绪';
       });

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Build script for Cimbar client
+# Build script for AirFerry client
 #
 # Prerequisites:
 #   - JDK 17+

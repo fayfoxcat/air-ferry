@@ -19,7 +19,7 @@ if (!opencvsdk) {
 }
 
 android {
-    namespace "cc.asac.cimbar"
+    namespace "cc.asac.airferry"
     compileSdk 36
     ndkVersion "30.0.14904198"
 
@@ -36,7 +36,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'cc.asac.cimbar'
+        applicationId 'cc.asac.airferry'
         minSdk 28
         targetSdk 36
         versionCode 23
@@ -90,11 +90,11 @@ configurations.configureEach {
     exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
 }
 
-// Rename output APK to "cimbar-<variant>.apk" using the AGP 9 variant API
+// Rename output APK to "airferry-<variant>.apk" using the AGP 9 variant API
 androidComponents {
     onVariants(selector().all()) { variant ->
         variant.outputs.each { output ->
-            output.outputFileName.set("cimbar-${variant.name}.apk")
+            output.outputFileName.set("airferry-${variant.name}.apk")
         }
     }
 }

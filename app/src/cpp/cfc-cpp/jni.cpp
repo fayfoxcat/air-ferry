@@ -13,7 +13,7 @@
 #include <memory>
 #include <mutex>
 
-#define TAG "CimbarCPP"
+#define TAG "AirFerryCPP"
 
 using namespace std;
 using namespace cv;
@@ -123,7 +123,7 @@ namespace {
 
 extern "C" {
 jstring JNICALL
-Java_cc_asac_cimbar_ReceiverFragment_processImageJNI(JNIEnv *env, jobject instance, jlong matAddr, jstring dataPathObj, jint modeInt, jint rotationDeg)
+Java_cc_asac_airferry_ReceiverFragment_processImageJNI(JNIEnv *env, jobject instance, jlong matAddr, jstring dataPathObj, jint modeInt, jint rotationDeg)
 {
 	++_calls;
 
@@ -212,7 +212,7 @@ Java_cc_asac_cimbar_ReceiverFragment_processImageJNI(JNIEnv *env, jobject instan
 }
 
 void JNICALL
-Java_cc_asac_cimbar_ReceiverFragment_shutdownJNI(JNIEnv *env, jobject instance) {
+Java_cc_asac_airferry_ReceiverFragment_shutdownJNI(JNIEnv *env, jobject instance) {
 	__android_log_print(ANDROID_LOG_INFO, TAG, "Shutdown cfc-cpp\n");
 
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -227,7 +227,7 @@ Java_cc_asac_cimbar_ReceiverFragment_shutdownJNI(JNIEnv *env, jobject instance) 
 }
 
 void JNICALL
-Java_cc_asac_cimbar_ReceiverFragment_resetCompletedJNI(JNIEnv *env, jobject instance, jstring filenameObj) {
+Java_cc_asac_airferry_ReceiverFragment_resetCompletedJNI(JNIEnv *env, jobject instance, jstring filenameObj) {
 	string filename = jstring_to_cppstr(env, filenameObj);
 	std::lock_guard<std::mutex> lock(_mutex);
 	_completed.erase(filename);
