@@ -23,12 +23,12 @@ set(CMAKE_CXX_STANDARD 17)
 # ---- Locate libcimbar source -------------------------------------------------
 get_filename_component(_WEB_DIR   "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)
 get_filename_component(_PROJ_ROOT "${_WEB_DIR}/.."              ABSOLUTE)
-set(LIBCIMBAR_DIR "${_PROJ_ROOT}/app/src/cpp/libcimbar")
+set(LIBCIMBAR_DIR "${_PROJ_ROOT}/libcimbar")
 
 if(NOT EXISTS "${LIBCIMBAR_DIR}/CMakeLists.txt")
     message(FATAL_ERROR
         "libcimbar not found at ${LIBCIMBAR_DIR}.\n"
-        "Make sure the project structure is intact.")
+        "Run setup.sh first: bash /usr/src/app/setup.sh --libcimbar")
 endif()
 
 # ---- OpenCV -----------------------------------------------------------------

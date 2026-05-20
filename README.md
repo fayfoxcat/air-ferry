@@ -8,7 +8,7 @@
 
 > 本项目已移除上游的发送端（sender）代码，仅保留接收端 Android 应用。
 
-应用读取动态 [cimbar 码](https://github.com/sz3/libcimbar)。核心解码逻辑来自 libcimbar，以 git submodule 方式集成，指向上游 [sz3/libcimbar](https://github.com/sz3/libcimbar)。
+应用读取动态 [cimbar 码](https://github.com/sz3/libcimbar)。核心编解码逻辑来自 libcimbar（项目根目录 `libcimbar/`，由 `setup.sh` 下载），指向上游 [sz3/libcimbar](https://github.com/sz3/libcimbar)。详见 [docs/LIBCIMBAR.md](docs/LIBCIMBAR.md)。
 
 **发送端**需使用独立工具：
 - 网页版：[https://cimbar.org](https://cimbar.org)（推荐，无需安装）
@@ -43,19 +43,24 @@ Release APK 可在 [Releases 页面](../../releases) 下载。
 
 ## 构建
 
-1. 克隆仓库（含子模块）：
+1. 克隆仓库：
    ```
-   git clone --recursive https://github.com/fayfoxcat/cfc.git
+   git clone https://github.com/fayfoxcat/cfc.git
+   cd cfc
    ```
-   若已克隆但未拉取子模块，运行：
+2. 下载依赖（libcimbar 等）到项目根目录：
    ```
-   git submodule update --init --recursive
+   bash setup.sh --libcimbar
    ```
-2. 安装 [Android Studio](https://developer.android.com/studio)
-3. 安装 Android NDK（版本 `30.0.14904198`）
-4. 下载 [OpenCV Android SDK 4.5.0](https://github.com/opencv/opencv/releases/download/4.5.0/opencv-4.5.0-android-sdk.zip)
-5. 将本仓库作为项目根目录在 Android Studio 中打开
-6. 配置 OpenCV SDK 路径（二选一）：
+   也可一次性下载所有依赖（含 WASM 构建所需的 OpenCV 源码）：
+   ```
+   bash setup.sh
+   ```
+3. 安装 [Android Studio](https://developer.android.com/studio)
+4. 安装 Android NDK（版本 `30.0.14904198`）
+5. 下载 [OpenCV Android SDK 4.13.0](https://github.com/opencv/opencv/releases/download/4.13.0/opencv-4.13.0-android-sdk.zip)
+6. 将本仓库作为项目根目录在 Android Studio 中打开
+7. 配置 OpenCV SDK 路径（二选一）：
    - 在项目根目录创建 `local.properties`，添加：
      ```
      opencvsdk=/path/to/OpenCV-android-sdk

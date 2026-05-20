@@ -20,12 +20,26 @@ set -euo pipefail
 
 CIMBAR_ROOT=${CIMBAR_ROOT:-/usr/src/app}
 OPENCV_DIR="$CIMBAR_ROOT/opencv4"
+LIBCIMBAR_DIR="$CIMBAR_ROOT/libcimbar"
 WEB_DIR="$CIMBAR_ROOT/web"
 USE_WASM=${USE_WASM:-2}
 
 # Number of parallel jobs — default to all logical cores
 JOBS=${JOBS:-$(nproc)}
 echo ">>> Using $JOBS parallel jobs"
+
+# ---- 0. Check prerequisites -------------------------------------------------
+if [ ! -d "$LIBCIMBAR_DIR" ]; then
+    echo "ERROR: libcimbar/ not found at $LIBCIMBAR_DIR"
+    echo "Run setup.sh first: bash /usr/src/app/setup.sh --libcimbar"
+    exit 1
+fi
+
+if [ ! -d "$OPENCV_DIR" ]; then
+    echo "ERROR: opencv4/ not found at $OPENCV_DIR"
+    echo "Run setup.sh first: bash /usr/src/app/setup.sh --opencv"
+    exit 1
+fi
 
 # ---- 1. Build OpenCV.js (wasm) if not already done -------------------------
 OPENCV_JS="$OPENCV_DIR/opencv-build-wasm/build_wasm/bin/opencv.js"

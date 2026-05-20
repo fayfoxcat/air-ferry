@@ -21,7 +21,10 @@ set (PROJECTS
    concurrent
 )
 
-# 上游 libcimbar 库子目录（来自 git submodule）
+# 上游 libcimbar 库（项目根目录 ./libcimbar/，由 setup.sh 下载）
+set(LIBCIMBAR_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../libcimbar")
+
+# libcimbar 核心库
 set (LIBCIMBAR_LIBS
    libcimbar/src/lib/bit_file
    libcimbar/src/lib/chromatic_adaptation
@@ -35,6 +38,7 @@ set (LIBCIMBAR_LIBS
    libcimbar/src/lib/util
 )
 
+# libcimbar 第三方依赖
 set (LIBCIMBAR_THIRD_PARTY
    libcimbar/src/third_party_lib/base91
    libcimbar/src/third_party_lib/cxxopts
@@ -48,8 +52,8 @@ set (LIBCIMBAR_THIRD_PARTY
 include_directories(
         ${OpenCV_DIR}/jni/include
         .
-        libcimbar/src/lib
-        libcimbar/src/third_party_lib
+        "${LIBCIMBAR_ROOT}/src/lib"
+        "${LIBCIMBAR_ROOT}/src/third_party_lib"
 )
 
 foreach(proj ${PROJECTS})
@@ -57,5 +61,5 @@ foreach(proj ${PROJECTS})
 endforeach()
 
 foreach(proj ${LIBCIMBAR_LIBS} ${LIBCIMBAR_THIRD_PARTY})
-	add_subdirectory(${proj} build/${proj})
+	add_subdirectory("${LIBCIMBAR_ROOT}/${proj}" build/${proj})
 endforeach()

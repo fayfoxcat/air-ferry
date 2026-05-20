@@ -25,7 +25,8 @@ app/proguard/
 # IDE
 /.vscode/settings.json
 
-# OpenCV source + WASM build (re-downloaded at build time, not committed)
+# Dependencies downloaded by setup.sh (not committed)
+libcimbar/
 opencv4/
 
 # CMake / WASM build directories

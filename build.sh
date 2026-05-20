@@ -5,7 +5,7 @@
 # Prerequisites:
 #   - JDK 17+
 #   - Android SDK (set ANDROID_HOME or ANDROID_SDK_ROOT)
-#   - Android NDK 26.1.10909125
+#   - Android NDK 30.0.14904198
 #   - OpenCV Android SDK 4.5.0 (set opencvsdk in local.properties or OPENCV_SDK env)
 #
 # Usage:
