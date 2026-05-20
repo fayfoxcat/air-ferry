@@ -26,13 +26,11 @@ app/proguard/
 /.vscode/settings.json
 
 # Dependencies downloaded by setup.sh (not committed)
-libcimbar/
-opencv4/
+libcimbar/**
+opencv4/**
 
 # CMake / WASM build directories
-build-wasm-encode/
-build-wasm/
-build-asmjs/
+build-wasm-encode/**
 
 # Python
 __pycache__/

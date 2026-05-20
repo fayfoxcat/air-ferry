@@ -2,7 +2,7 @@
 
 ## CameraFileCopy（二次开发版）
 
-本项目 fork 自 [sz3/cfc](https://github.com/sz3/cfc)（上游原名 sz3/cimbar），在上游基础上进行了功能扩展与体验优化。
+本项目 fork 自 [sz3/cfc](https://github.com/sz3/cfc)，在上游基础上进行了功能扩展与体验优化。
 
 本项目包含两个子模块，均围绕 libcimbar 核心库构建：
 
@@ -90,6 +90,6 @@ Release APK 在 [Releases 页面](../../releases) 下载。仅支持 **arm64-v8a
 
 ## 上游项目
 
-- 上游仓库：[sz3/cfc](https://github.com/sz3/cfc)（原名 sz3/cimbar）
+- 上游仓库：[sz3/cfc](https://github.com/sz3/cfc)
 - libcimbar：[sz3/libcimbar](https://github.com/sz3/libcimbar)
 - 在线发送端：[https://cimbar.org](https://cimbar.org)
