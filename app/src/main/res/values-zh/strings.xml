@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Cimbar</string>
+    <string name="tab_receiver">文件接收</string>
+    <string name="tab_settings">设置</string>
+
+    <string name="settings_title">设置</string>
+    <string name="settings_language">语言设置</string>
+    <string name="settings_receive_mode">文件接收方式</string>
+    <string name="settings_save_local">接收到本地</string>
+    <string name="settings_upload_url">接收完上传到指定 URL</string>
+    <string name="settings_opensource">开源地址</string>
+    <string name="settings_about">关于我们</string>
+
+    <string name="camera_permission_denied">相机权限未授予</string>
+    <string name="upload_success">上传成功</string>
+    <string name="upload_failed">上传失败</string>
+
+    <string name="about_text">Cimbar 是一个开源的光学数据传输工具。通过动态条码利用摄像头传输文件——无需 WiFi、蓝牙或 NFC。</string>
+    <string name="scan_hint">对准色块二维码接收文件</string>
+
+    <!-- Language options (displayed in radio buttons) -->
+    <string name="language_zh">中文</string>
+    <string name="language_en">English</string>
+
+    <!-- Settings hints -->
+    <string name="upload_url_hint">https://example.com/upload</string>
+
+    <!-- Dynamic strings -->
+    <string name="version_format">v%1$s</string>
+    <string name="progress_percent">%1$d%%</string>
+</resources>

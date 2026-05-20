@@ -1,0 +1,27 @@
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+rootProject.name='Cimbar'
+
+// Read opencvsdk from local.properties, fallback to OPENCV_SDK env var
+def localProperties = new File(rootDir, 'local.properties')
+def opencvsdk = null
+if (localProperties.exists()) {
+    def props = new Properties()
+    localProperties.withInputStream { props.load(it) }
+    opencvsdk = props.getProperty('opencvsdk')
+}
+if (!opencvsdk) {
+    opencvsdk = System.getenv('OPENCV_SDK')
+}
+if (!opencvsdk) {
+    throw new GradleException(
+        'opencvsdk not set. Please set it in local.properties (opencvsdk=/path/to/OpenCV-android-sdk) ' +
+        'or via the OPENCV_SDK environment variable.'
+    )
+}
+
+include ':app'
+
+include ':opencv'
+project(':opencv').projectDir = new File(opencvsdk + '/sdk')

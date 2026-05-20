@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Camera preview -->
+    <cc.asac.cimbar.OpencvCameraView
+        android:id="@+id/main_surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Top gradient overlay -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/top_gradient"
+        android:layout_gravity="top" />
+
+    <!-- Bottom gradient overlay -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@drawable/bottom_gradient"
+        android:layout_gravity="bottom" />
+
+    <!-- App name header (inset-aware) -->
+    <LinearLayout
+        android:id="@+id/receiver_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_gravity="top">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/app_name"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:shadowColor="#66000000"
+            android:shadowRadius="8" />
+
+    </LinearLayout>
+
+    <!-- Scan corners + animated scan line overlay, centered in the camera view -->
+    <cc.asac.cimbar.ScanCornersView
+        android:id="@+id/scan_corners"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_gravity="center" />
+
+    <!-- Circular progress (speed indicator) — symmetric to mode_switch on the left -->
+    <cc.asac.cimbar.CircularProgressView
+        android:id="@+id/circular_progress"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="20dp" />
+
+    <!-- Mode toggle button -->
+    <cc.asac.cimbar.ModeSelToggle
+        android:id="@+id/mode_switch"
+        android:layout_width="48dp"
+        android:layout_height="54dp"
+        android:background="@drawable/mode_toggle_bg"
+        android:button="@drawable/modesel"
+        android:checked="false"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp" />
+
+    <!-- Scan hint pill -->
+    <TextView
+        android:id="@+id/tv_scan_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/scan_hint"
+        android:textColor="#EEFFFFFF"
+        android:textSize="13sp"
+        android:background="@drawable/pill_bg"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="28dp"
+        android:shadowColor="#44000000"
+        android:shadowRadius="4" />
+
+</FrameLayout>

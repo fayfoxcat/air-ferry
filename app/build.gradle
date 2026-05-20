@@ -1,0 +1,100 @@
+apply plugin: 'com.android.application'
+
+// Read opencvsdk from local.properties, fallback to OPENCV_SDK env var
+def localProperties = new File(rootDir, 'local.properties')
+def opencvsdk = null
+if (localProperties.exists()) {
+    def props = new Properties()
+    localProperties.withInputStream { props.load(it) }
+    opencvsdk = props.getProperty('opencvsdk')
+}
+if (!opencvsdk) {
+    opencvsdk = System.getenv('OPENCV_SDK')
+}
+if (!opencvsdk) {
+    throw new GradleException(
+        'opencvsdk not set. Please set it in local.properties (opencvsdk=/path/to/OpenCV-android-sdk) ' +
+        'or via the OPENCV_SDK environment variable.'
+    )
+}
+
+android {
+    namespace "cc.asac.cimbar"
+    compileSdk 36
+    ndkVersion "30.0.14904198"
+
+    def keystoreFile = System.getenv('KEYSTORE_FILE') ?: (project.hasProperty('KEYSTORE_FILE') ? KEYSTORE_FILE : null)
+    if (keystoreFile) {
+        signingConfigs {
+            release {
+                storeFile file(keystoreFile)
+                storePassword System.getenv('KEYSTORE_PASSWORD') ?: KEYSTORE_PASSWORD
+                keyAlias System.getenv('KEY_ALIAS') ?: KEY_ALIAS
+                keyPassword System.getenv('KEY_PASSWORD') ?: KEY_PASSWORD
+            }
+        }
+    }
+
+    defaultConfig {
+        applicationId 'cc.asac.cimbar'
+        minSdk 28
+        targetSdk 36
+        versionCode 23
+        versionName '0.6.4.1'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "arm64-v8a"
+        }
+        externalNativeBuild {
+            cmake {
+                cppFlags "-frtti -fexceptions -std=c++17"
+                abiFilters 'arm64-v8a'
+                arguments "-DCMAKE_BUILD_TYPE=Release", "-DANDROID_STL=c++_static", "-DOpenCV_DIR=" + opencvsdk + "/sdk/native"
+            }
+        }
+        signingConfig signingConfigs.debug
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "src/cpp/CMakeLists.txt"
+            version "3.16.3+"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+    buildToolsVersion '36.1.0'
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.13.0'
+    implementation project(path: ':opencv')
+}
+
+configurations.configureEach {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+}
+
+// Rename output APK to "cimbar-<variant>.apk" using the AGP 9 variant API
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.each { output ->
+            output.outputFileName.set("cimbar-${variant.name}.apk")
+        }
+    }
+}

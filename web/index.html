@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cimbar 编码器</title>
+
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ── 蓝白色调 ── */
+      --bg:           #f0f4f8;          /* 页面底色：浅蓝灰 */
+      --sidebar-bg:   #ffffff;          /* 侧边栏：纯白 */
+      --panel-bg:     #e8eef5;          /* 右侧画布区：浅蓝 */
+      --card-bg:      #f7f9fc;          /* 卡片/输入框背景 */
+      --border:       #d0dae8;          /* 边框 */
+      --border-light: #e4ecf4;          /* 浅边框 */
+
+      --accent:       #1a6fd4;          /* 主蓝 */
+      --accent-light: #e8f0fb;          /* 主蓝浅底 */
+      --accent-mid:   #4a90d9;          /* 中蓝（hover） */
+      --accent-dark:  #1254a8;          /* 深蓝（active） */
+
+      --text:         #1a2332;          /* 主文字 */
+      --text-secondary: #4a5568;        /* 次要文字 */
+      --muted:        #8a9ab5;          /* 占位/标签 */
+
+      --danger:       #d93025;
+      --danger-light: #fce8e6;
+      --ok:           #1e8e3e;
+      --ok-light:     #e6f4ea;
+      --warn:         #e37400;
+
+      --shadow-sm:    0 1px 3px rgba(26,111,212,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:    0 4px 12px rgba(26,111,212,0.10), 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-inset: inset 0 1px 3px rgba(0,0,0,0.06);
+
+      --radius:       10px;
+      --radius-sm:    6px;
+      --sidebar:      448px;            /* 280 × 1.6 ≈ 448 */
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                   "Microsoft YaHei", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Layout
+    ════════════════════════════════════════════════════════════════════ */
+    #app {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Sidebar
+    ════════════════════════════════════════════════════════════════════ */
+    #sidebar {
+      width: var(--sidebar);
+      min-width: var(--sidebar);
+      height: 100vh;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 10;
+    }
+
+    /* Header */
+    #sidebar-header {
+      padding: 28px 28px 22px;
+      background: linear-gradient(135deg, #1a6fd4 0%, #2d8ef0 100%);
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    #sidebar-header::after {
+      content: '';
+      position: absolute;
+      right: -30px; top: -30px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+    #sidebar-header::before {
+      content: '';
+      position: absolute;
+      right: 20px; bottom: -40px;
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+    #sidebar-header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.01em;
+      position: relative;
+    }
+    #sidebar-header .header-sub {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.75);
+      margin-top: 4px;
+      position: relative;
+    }
+    #sidebar-header .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+      padding: 3px 10px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.9);
+      position: relative;
+    }
+    #sidebar-header .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #7fffb2;
+    }
+    #sidebar-header .badge-dot.loading { background: #ffd166; }
+
+    /* Body */
+    #sidebar-body {
+      flex: 1;
+      padding: 24px 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Section */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-light);
+    }
+
+    /* ── Drop zone ── */
+    #dropzone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      background: var(--card-bg);
+      box-shadow: var(--shadow-inset);
+    }
+    #dropzone:hover, #dropzone:focus-visible {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      box-shadow: 0 0 0 3px rgba(26,111,212,0.12);
+      outline: none;
+    }
+    #dropzone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      box-shadow: 0 0 0 4px rgba(26,111,212,0.18);
+    }
+    #dropzone.has-file {
+      border-style: solid;
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .dz-icon { font-size: 2rem; line-height: 1; margin-bottom: 8px; }
+    #dropzone-text {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      word-break: break-all;
+    }
+    #dropzone-text strong { color: var(--accent); }
+    #file-input { display: none; }
+
+    /* ── Form controls ── */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .field label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .field label .val-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-light);
+      border: 1px solid rgba(26,111,212,0.2);
+      border-radius: 4px;
+      padding: 1px 7px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    select {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 9px 32px 9px 12px;
+      font-size: 0.82rem;
+      width: 100%;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a9ab5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26,111,212,0.15);
+    }
+    select:hover { border-color: var(--accent-mid); }
+
+    /* Range slider */
+    .range-wrap {
+      position: relative;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+      height: 5px;
+      border-radius: 3px;
+    }
+    input[type="range"]:focus { outline: none; }
+
+    /* ── Status card ── */
+    .status-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    #status {
+      font-size: 0.8rem;
+      color: var(--muted);
+      min-height: 1.2em;
+      line-height: 1.5;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #status::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+    }
+    #status.ok    { color: var(--ok); }
+    #status.ok::before    { background: var(--ok); }
+    #status.error { color: var(--danger); }
+    #status.error::before { background: var(--danger); }
+    #status.info  { color: var(--accent); }
+    #status.info::before  { background: var(--accent); }
+
+    #progress-wrap { display: none; }
+    #progress-track {
+      background: var(--border);
+      border-radius: 4px;
+      height: 6px;
+      overflow: hidden;
+    }
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 100%);
+      width: 0%;
+      transition: width 0.15s ease;
+      border-radius: 4px;
+    }
+    #progress-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    #frame-info {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+      background: var(--accent-light);
+      border-radius: var(--radius-sm);
+      padding: 5px 10px;
+      display: none;
+    }
+    #frame-info.visible { display: block; }
+
+    /* ── Buttons ── */
+    #sidebar-footer {
+      padding: 16px 24px 20px;
+      border-top: 1px solid var(--border-light);
+      flex-shrink: 0;
+      background: var(--sidebar-bg);
+    }
+    .btn-row { display: flex; gap: 10px; }
+    .btn-row .btn { flex: 1; }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 11px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+      letter-spacing: 0.01em;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+    .btn:not(:disabled):active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1a6fd4 0%, #2d8ef0 100%);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(26,111,212,0.35);
+    }
+    .btn-primary:not(:disabled):hover {
+      background: linear-gradient(135deg, #1254a8 0%, #1a6fd4 100%);
+      box-shadow: 0 4px 12px rgba(26,111,212,0.45);
+    }
+
+    .btn-danger {
+      background: var(--danger-light);
+      border-color: rgba(217,48,37,0.3);
+      color: var(--danger);
+    }
+    .btn-danger:not(:disabled):hover {
+      background: #fad4d1;
+      box-shadow: 0 2px 8px rgba(217,48,37,0.2);
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Canvas panel
+    ════════════════════════════════════════════════════════════════════ */
+    #canvas-panel {
+      flex: 1;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--panel-bg);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Subtle grid pattern on the canvas background */
+    #canvas-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(26,111,212,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26,111,212,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    #canvas-wrap {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    #canvas-wrap canvas {
+      max-width: calc(100% - 32px);
+      max-height: calc(100% - 32px);
+      width: auto;
+      height: auto;
+      image-rendering: pixelated;
+      display: block;
+      border-radius: 4px;
+      box-shadow: 0 8px 32px rgba(26,111,212,0.15), 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    #canvas-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      color: var(--muted);
+      user-select: none;
+      pointer-events: none;
+      position: relative;
+    }
+    .ph-icon {
+      font-size: 5rem;
+      opacity: 0.15;
+      line-height: 1;
+      filter: grayscale(0.3);
+    }
+    #canvas-placeholder p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      opacity: 0.6;
+    }
+    #canvas-placeholder .ph-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.4;
+      text-align: center;
+      max-width: 200px;
+      line-height: 1.5;
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Loading overlay
+    ════════════════════════════════════════════════════════════════════ */
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: rgba(240,244,248,0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      gap: 16px;
+      backdrop-filter: blur(6px);
+    }
+    #loading.hidden { display: none; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading p {
+      color: var(--accent);
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Scrollbar
+    ════════════════════════════════════════════════════════════════════ */
+    #sidebar::-webkit-scrollbar { width: 5px; }
+    #sidebar::-webkit-scrollbar-track { background: transparent; }
+    #sidebar::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+    #sidebar::-webkit-scrollbar-thumb:hover { background: var(--accent-mid); }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Responsive
+    ════════════════════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      :root { --sidebar: 100vw; }
+      #app { flex-direction: column; }
+      #sidebar {
+        width: 100%; min-width: 0;
+        height: auto; max-height: 60vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 4px 12px rgba(26,111,212,0.1);
+      }
+      #canvas-panel { height: 40vh; }
+      html, body { overflow: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading overlay -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>正在加载 WASM 模块…</p>
+  </div>
+
+  <div id="app">
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Left sidebar
+    ══════════════════════════════════════════════════════════════════ -->
+    <aside id="sidebar" aria-label="控制面板">
+
+      <!-- Header -->
+      <div id="sidebar-header">
+        <h1>Cimbar 编码器</h1>
+        <div class="header-sub">彩色矩阵条码 · 空气隔离传输</div>
+        <div class="header-badge">
+          <span class="badge-dot loading" id="wasm-dot"></span>
+          <span id="wasm-status-text">加载 WASM 中…</span>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div id="sidebar-body">
+
+        <!-- ── 文件 ── -->
+        <section aria-labelledby="sec-file">
+          <div class="section-label" id="sec-file">文件</div>
+          <div id="dropzone" role="button" tabindex="0"
+               aria-label="点击或拖拽文件到此处">
+            <div class="dz-icon">📂</div>
+            <p id="dropzone-text">点击选择文件，或将文件拖拽到此处</p>
+          </div>
+          <input type="file" id="file-input" aria-label="选择文件" />
+        </section>
+
+        <!-- ── 编码设置 ── -->
+        <section aria-labelledby="sec-settings">
+          <div class="section-label" id="sec-settings">编码设置</div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+
+            <div class="field">
+              <label for="mode-select">编码模式</label>
+              <select id="mode-select" aria-label="编码模式">
+                <option value="68" selected>B — 1024×1024 · ~106 KB/s（标准）</option>
+                <option value="67">BM — 1024×720 · ~74 KB/s（迷你）</option>
+                <option value="66">BU — 736×637 · ~52 KB/s（微型）</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="compression-range">
+                压缩级别
+                <span class="val-badge" id="comp-val">16</span>
+              </label>
+              <div class="range-wrap">
+                <input type="range" id="compression-range"
+                       min="1" max="22" value="16" step="1"
+                       aria-label="压缩级别" aria-valuemin="1" aria-valuemax="22" aria-valuenow="16" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="fps-range">
+                播放帧率
+                <span class="val-badge" id="fps-val">15 fps</span>
+              </label>
+              <div class="range-wrap">
+                <input type="range" id="fps-range"
+                       min="1" max="30" value="15" step="1"
+                       aria-label="帧率" aria-valuemin="1" aria-valuemax="30" aria-valuenow="15" />
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── 状态 ── -->
+        <section aria-labelledby="sec-status">
+          <div class="section-label" id="sec-status">状态</div>
+          <div class="status-card">
+            <div id="status" aria-live="polite">等待 WASM 模块…</div>
+            <div id="progress-wrap" role="progressbar"
+                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="progress-track">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="progress-label">0 / ? 帧</div>
+            </div>
+            <div id="frame-info" aria-live="polite"></div>
+          </div>
+        </section>
+
+      </div><!-- /sidebar-body -->
+
+      <!-- Footer buttons -->
+      <div id="sidebar-footer">
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btn-encode" disabled>
+            ▶&nbsp;开始编码
+          </button>
+          <button class="btn btn-danger" id="btn-stop" disabled>
+            ■&nbsp;停止
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Right canvas panel
+    ══════════════════════════════════════════════════════════════════ -->
+    <main id="canvas-panel" aria-label="条码预览">
+      <div id="canvas-wrap">
+        <div id="canvas-placeholder">
+          <div class="ph-icon">▦</div>
+          <p>等待编码…</p>
+          <p class="ph-hint">选择文件并点击「开始编码」<br>条码将在此处实时显示</p>
+        </div>
+      </div>
+    </main>
+
+  </div><!-- /app -->
+
+  <script src="main.js"></script>
+  <script src="cimbar_js.js"></script>
+
+  <script>
+    // Sync WASM ready state to header badge
+    (function () {
+      const dot  = document.getElementById('wasm-dot');
+      const text = document.getElementById('wasm-status-text');
+      // Poll until Module is ready (onModuleReady sets status)
+      const _origOnReady = window.__cimbarOnReady;
+      document.addEventListener('cimbar:ready', () => {
+        dot.classList.remove('loading');
+        text.textContent = 'WASM 已就绪';
+      });
+    })();
+  </script>
+</body>
+</html>

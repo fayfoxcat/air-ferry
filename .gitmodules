@@ -1,0 +1,3 @@
+[submodule "app/src/cpp/libcimbar"]
+	path = app/src/cpp/libcimbar
+	url = https://github.com/sz3/libcimbar.git
