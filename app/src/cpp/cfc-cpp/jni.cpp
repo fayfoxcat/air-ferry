@@ -39,7 +39,7 @@ namespace {
 		int guideWidth = minsz >> 7;
 		int outlineWidth = guideWidth + (minsz >> 8);
 		int guideLength = guideWidth << 3;
-		int guideOffset = minsz >> 5;
+		int guideOffset = minsz >> 4;
 		int outlineOffset = (outlineWidth - guideWidth) >> 1;
 
 		cv::Scalar color = cv::Scalar(255,255,255);

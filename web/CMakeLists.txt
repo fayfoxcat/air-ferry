@@ -138,7 +138,6 @@ if(DEFINED USE_WASM)
         , "_cimbare_rotate_window"
         , "_cimbare_get_aspect_ratio"
         , "_cimbare_get_frame_buff"
-        , "_cimbare_blocks_required"
     )
 
     if(USE_WASM EQUAL "2")
