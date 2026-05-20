@@ -27,4 +27,5 @@
 
     <!-- Dynamic strings -->
     <string name="version_format">v%1$s</string>
+    <string name="progress_percent">%1$d%%</string>
 </resources>

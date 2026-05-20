@@ -26,27 +26,27 @@ set(LIBCIMBAR_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../libcimbar")
 
 # libcimbar 核心库
 set (LIBCIMBAR_LIBS
-   libcimbar/src/lib/bit_file
-   libcimbar/src/lib/chromatic_adaptation
-   libcimbar/src/lib/cimb_translator
-   libcimbar/src/lib/compression
-   libcimbar/src/lib/encoder
-   libcimbar/src/lib/extractor
-   libcimbar/src/lib/fountain
-   libcimbar/src/lib/image_hash
-   libcimbar/src/lib/serialize
-   libcimbar/src/lib/util
+   src/lib/bit_file
+   src/lib/chromatic_adaptation
+   src/lib/cimb_translator
+   src/lib/compression
+   src/lib/encoder
+   src/lib/extractor
+   src/lib/fountain
+   src/lib/image_hash
+   src/lib/serialize
+   src/lib/util
 )
 
 # libcimbar 第三方依赖
 set (LIBCIMBAR_THIRD_PARTY
-   libcimbar/src/third_party_lib/base91
-   libcimbar/src/third_party_lib/cxxopts
-   libcimbar/src/third_party_lib/intx
-   libcimbar/src/third_party_lib/libcorrect
-   libcimbar/src/third_party_lib/libpopcnt
-   libcimbar/src/third_party_lib/wirehair
-   libcimbar/src/third_party_lib/zstd
+   src/third_party_lib/base91
+   src/third_party_lib/cxxopts
+   src/third_party_lib/intx
+   src/third_party_lib/libcorrect
+   src/third_party_lib/libpopcnt
+   src/third_party_lib/wirehair
+   src/third_party_lib/zstd
 )
 
 include_directories(
