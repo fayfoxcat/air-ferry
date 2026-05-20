@@ -43,7 +43,7 @@ cfc/
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/fayfoxcat/cfc.git
+git clone https://github.com/fayfoxcat/air-ferry.git
 cd cfc
 
 # 2. 下载依赖
