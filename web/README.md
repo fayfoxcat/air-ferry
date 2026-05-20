@@ -1,121 +1,97 @@
-# Cimbar Web 编码器
+# web/ — WASM 编码端
 
-将文件编码为 Cimbar 彩色矩阵条码动画，在浏览器中运行，无需安装任何软件。
+基于 libcimbar 的 `cimbar_js` 构建，将文件编码为 cimbar 彩色矩阵条码动画，在浏览器中运行，无需安装任何软件。
+
+输出文件通过 `cimbare_get_frame_buff()` 直接读取原始 RGB 像素渲染到 Canvas，不依赖 GLFW/WebGL 窗口。
 
 ## 文件说明
 
 ```
 web/
-├── index.html          # 前端页面
-├── main.js             # 前端逻辑（调用 WASM C API）
-├── CMakeLists.txt      # 编码端 WASM 构建配置
-├── build-wasm-encode.sh# 构建脚本（在 Docker 容器内运行）
-├── Dockerfile          # 构建镜像
-└── cimbar_js.js        # ← 构建产物（构建后生成）
+├── index.html              # 前端页面
+├── main.js                 # 前端逻辑（调用 WASM C API）
+├── CMakeLists.txt          # WASM 构建配置（引用 libcimbar）
+├── build-wasm-encode.sh    # 构建脚本（在 Docker 容器内运行）
+├── Dockerfile              # 构建镜像
+└── cimbar_js.js            # ← 构建产物（构建后生成）
 ```
 
 ## 构建 WASM
 
 ### 前置条件
 
-- Docker（推荐）或本地安装的 Emscripten 3.1.69+
-- 网络连接（首次构建需要克隆 OpenCV）
+- Docker
+- 项目根目录 `libcimbar/` + `opencv4/`（运行 `bash setup.sh`）
 
-### 方式一：Docker 一键构建（推荐）
+### Docker 构建
 
 ```bash
 # 在项目根目录执行
-# 1. 下载依赖（只需一次）
-bash setup.sh
-
-# 2. 启动 emscripten 容器并运行构建脚本
+bash setup.sh                          # 下载依赖
 docker run --rm \
   --mount type=bind,source="$(pwd)",target="/usr/src/app" \
   emscripten/emsdk:3.1.69 \
   bash /usr/src/app/web/build-wasm-encode.sh
 ```
 
-构建完成后，`web/cimbar_js.js` 会自动生成。
+构建完成后 `web/cimbar_js.js` 自动生成。
 
-### 方式二：使用自定义镜像
+### 使用自定义镜像
 
 ```bash
-# 构建镜像
 docker build -t cimbar-wasm-builder -f web/Dockerfile .
-
-# 运行构建（OpenCV 缓存到命名卷）
 docker run --rm \
   -v "$(pwd):/usr/src/app" \
   -v cimbar-opencv-cache:/usr/src/app/opencv4 \
   cimbar-wasm-builder
 ```
 
-### 方式三：本地 Emscripten
+### 本地 Emscripten
 
 ```bash
-# 确保已安装 emsdk 并激活环境
-source /path/to/emsdk/emsdk_env.sh
-
-# 在项目根目录
+source /emsdk/emsdk_env.sh
 mkdir build-wasm-encode && cd build-wasm-encode
-emcmake cmake ../web \
-    -DUSE_WASM=2 \
-    -DOPENCV_DIR=/path/to/opencv4 \
-    -DCMAKE_INSTALL_PREFIX=../web
+emcmake cmake ../web -DUSE_WASM=2 -DOPENCV_DIR=/path/to/opencv4 -DCMAKE_INSTALL_PREFIX=../web
 make -j$(nproc) cimbar_js
 make install
 ```
 
 ## 运行
 
-构建完成后，直接用任意 HTTP 服务器托管 `web/` 目录：
-
 ```bash
-# Python
 cd web && python3 -m http.server 8080
-
-# Node.js
-cd web && npx http-server -p 8080
 ```
 
-然后打开 `http://localhost:8080`。
+打开 `http://localhost:8080`。（WASM 的 CORS 限制，不能直接打开 `file://`）
 
-> **注意**：由于 WASM 的 CORS 限制，必须通过 HTTP 服务器访问，不能直接打开 `file://`。
+## 编码模式
 
-## 编码模式说明
+| 模式 | 分辨率 | 数据速率 |
+|---|---|---|
+| 68（B，标准） | 1024×1024 | ~106 KB/s |
+| 67（BM，迷你） | 1024×720 | ~74 KB/s |
+| 66（BU，微型） | 736×637 | ~52 KB/s |
 
-| 模式 | 分辨率 | 说明 |
-|------|--------|------|
-| 68（标准） | 1024×1024 | 默认，最高数据密度 |
-| 67（迷你） | 1024×720  | 宽屏格式 |
-| 66（微型） | 736×637   | 小尺寸屏幕 |
-
-## C API 接口（WASM 导出函数）
-
-编码端导出以下 C 函数（`USE_WASM=2` 模式）：
+## C API（WASM 导出）
 
 ```c
-// 配置编码模式和压缩级别
-int  cimbare_configure(int mode_val, int compression);
-
-// 初始化一次编码会话（传入文件名）
-int  cimbare_init_encode(const char* filename, unsigned fnsize, int encode_id);
-
-// 查询每次 encode 调用的缓冲区大小
-int  cimbare_encode_bufsize();
-
-// 喂入文件数据（分块调用，最后一块 size < bufsize 触发完成）
-int  cimbare_encode(const unsigned char* buffer, unsigned size);
-
-// 生成下一帧（返回帧序号，<0 表示错误）
-int  cimbare_next_frame(bool color_balance);
-
-// 获取当前帧的像素缓冲区指针（RGB，3 通道）
-int  cimbare_get_frame_buff(unsigned char** buff);
-
-// 获取当前配置的宽高比
-float cimbare_get_aspect_ratio();
-
-// 旋转显示（0=正常，1=旋转90°）
-int  cimbare_rotate_window(bool rotate);
+int  cimbare_configure(int mode_val, int compression);           // 设置编码模式
+int  cimbare_init_encode(const char* filename, unsigned fnSize, int encode_id);  // 初始化
+int  cimbare_encode_bufsize();                                    // 查询块大小
+int  cimbare_encode(const unsigned char* buffer, unsigned size);  // 喂入文件数据
+int  cimbare_next_frame(bool color_balance);                      // 生成下一帧
+int  cimbare_get_frame_buff(unsigned char** buff);                // 读取像素缓冲区
+float cimbare_get_aspect_ratio();                                 // 宽高比
+int  cimbare_rotate_window(bool rotate);                          // 旋转显示
 ```
+
+### 与本项目的变更
+
+相比上游 libcimbar 的 `cimbar_js`，本项目新增以下导出函数：
+
+| 函数 | 用途 |
+|---|---|
+| `_cimbare_get_frame_buff` | 直接读取帧像素，替代 GLFW 窗口 |
+| `_cimbare_rotate_window` | 旋转显示方向 |
+
+并移除了上游不存在的 `_cimbare_blocks_required`（前端已做兼容判断）。
