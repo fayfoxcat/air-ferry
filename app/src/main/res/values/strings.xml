@@ -5,9 +5,11 @@
 
     <string name="settings_title">Settings</string>
     <string name="settings_language">Language</string>
-    <string name="settings_receive_mode">File Receive Mode</string>
-    <string name="settings_save_local">Save to device</string>
-    <string name="settings_upload_url">Upload to URL</string>
+    <string name="settings_receive_mode">File Storage</string>
+    <string name="settings_save_local">Local Storage</string>
+    <string name="settings_upload_cloud">Cloud Storage</string>
+    <string name="settings_share_social">Social Platform</string>
+    <string name="settings_upload_url">Upload URL</string>
     <string name="settings_opensource">Open Source</string>
     <string name="settings_about">About</string>
 
@@ -24,6 +26,32 @@
 
     <!-- Settings hints -->
     <string name="upload_url_hint">https://example.com/upload</string>
+    <string name="error_invalid_url">Please enter a valid http/https URL</string>
+
+    <!-- Confirm dialog -->
+    <string name="confirm_file_title">File Received</string>
+    <string name="confirm_file_msg">File: %1$s</string>
+    <string name="confirm_save_title">Save File</string>
+    <string name="confirm_save_msg">File: %1$s\nSave to device?</string>
+    <string name="confirm_upload_title">Upload File</string>
+    <string name="confirm_upload_msg">File: %1$s\nUpload to server?</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_upload">Upload</string>
+    <string name="btn_share">Share</string>
+    <string name="confirm_btn">Confirm</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="uploading">Uploading…</string>
+    <string name="save_cancelled_retry">Save cancelled. You can retry or close this dialog.</string>
+    <string name="dialog_save_failed">Save failed: %1$s</string>
+    <string name="dialog_upload_failed">Upload failed: %1$s</string>
+
+    <string name="settings_log">Log</string>
+    <string name="settings_log_desc">Runtime logs are saved locally. Export to share or inspect.</string>
+    <string name="settings_log_export">Export Log</string>
+    <string name="log_export_empty">No log file found.</string>
+
+    <string name="copy_error">Copy Error</string>
 
     <!-- Dynamic strings -->
     <string name="version_format">v%1$s</string>

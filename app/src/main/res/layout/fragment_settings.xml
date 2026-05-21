@@ -131,27 +131,23 @@
                         android:textColor="@color/colorOnSurface" />
                 </LinearLayout>
 
-                <RadioGroup
-                    android:id="@+id/rg_receive_mode"
-                    android:layout_width="match_parent"
+                <CheckBox
+                    android:id="@+id/cb_save_local"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <RadioButton
-                        android:id="@+id/rb_save_local"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/settings_save_local"
-                        android:textColor="@color/colorOnSurface"
-                        android:textSize="14sp"
-                        android:layout_marginBottom="8dp" />
-                    <RadioButton
-                        android:id="@+id/rb_upload_url"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/settings_upload_url"
-                        android:textColor="@color/colorOnSurface"
-                        android:textSize="14sp" />
-                </RadioGroup>
+                    android:text="@string/settings_save_local"
+                    android:textColor="@color/colorOnSurface"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp" />
+
+                <CheckBox
+                    android:id="@+id/cb_upload_cloud"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_upload_cloud"
+                    android:textColor="@color/colorOnSurface"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp" />
 
                 <EditText
                     android:id="@+id/et_upload_url"
@@ -160,10 +156,19 @@
                     android:hint="@string/upload_url_hint"
                     android:inputType="textUri"
                     android:visibility="gone"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
                     android:padding="12dp"
                     android:textSize="13sp"
                     android:background="@drawable/edit_bg" />
+
+                <CheckBox
+                    android:id="@+id/cb_share_social"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_share_social"
+                    android:textColor="@color/colorOnSurface"
+                    android:textSize="14sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -226,6 +231,70 @@
                     android:paddingRight="10dp"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Export Log Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="@color/cardBackground"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/dividerColor"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="20dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_log"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorOnSurface" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_log_desc"
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.4"
+                    android:textColor="@color/tabInactiveColor"
+                    android:layout_marginBottom="14dp" />
+
+                <Button
+                    android:id="@+id/btn_export_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="@string/settings_log_export"
+                    android:textColor="@color/colorOnPrimary"
+                    android:textSize="13sp"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:stateListAnimator="@null"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

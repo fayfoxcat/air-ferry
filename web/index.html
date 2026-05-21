@@ -642,16 +642,21 @@
   <script src="cimbar_js.js"></script>
 
   <script>
-    // Sync WASM ready state to header badge
+    // Sync WASM ready state to header badge.
+    // onRuntimeInitialized may fire synchronously during cimbar_js.js execution
+    // (before this listener is registered), so we also check Module.calledRun.
     (function () {
       const dot  = document.getElementById('wasm-dot');
       const text = document.getElementById('wasm-status-text');
-      // Poll until Module is ready (onModuleReady sets status)
-      const _origOnReady = window.__airferryOnReady;
-      document.addEventListener('airferry:ready', () => {
+      function setReady() {
         dot.classList.remove('loading');
         text.textContent = 'WASM 已就绪';
-      });
+      }
+      if (typeof Module !== 'undefined' && Module.calledRun) {
+        setReady();
+      } else {
+        document.addEventListener('airferry:ready', setReady);
+      }
     })();
   </script>
 </body>

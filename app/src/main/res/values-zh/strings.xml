@@ -5,9 +5,11 @@
 
     <string name="settings_title">设置</string>
     <string name="settings_language">语言设置</string>
-    <string name="settings_receive_mode">文件接收方式</string>
-    <string name="settings_save_local">接收到本地</string>
-    <string name="settings_upload_url">接收完上传到指定 URL</string>
+    <string name="settings_receive_mode">文件存储</string>
+    <string name="settings_save_local">本地存储</string>
+    <string name="settings_upload_cloud">云端存储</string>
+    <string name="settings_share_social">社交平台</string>
+    <string name="settings_upload_url">上传 URL</string>
     <string name="settings_opensource">开源地址</string>
     <string name="settings_about">关于我们</string>
 
@@ -24,6 +26,32 @@
 
     <!-- Settings hints -->
     <string name="upload_url_hint">https://example.com/upload</string>
+    <string name="error_invalid_url">请输入有效的 http/https 地址</string>
+
+    <!-- Confirm dialog -->
+    <string name="confirm_file_title">文件接收完成</string>
+    <string name="confirm_file_msg">文件名: %1$s</string>
+    <string name="confirm_save_title">保存文件</string>
+    <string name="confirm_save_msg">文件名: %1$s\n即将保存到设备，是否继续？</string>
+    <string name="confirm_upload_title">上传文件</string>
+    <string name="confirm_upload_msg">文件名: %1$s\n即将上传到服务器，是否继续？</string>
+    <string name="btn_close">关闭</string>
+    <string name="btn_save">保存</string>
+    <string name="btn_upload">上传</string>
+    <string name="btn_share">分享</string>
+    <string name="confirm_btn">确认</string>
+    <string name="cancel_btn">取消</string>
+    <string name="uploading">正在上传…</string>
+    <string name="save_cancelled_retry">已取消保存，可以重试或关闭弹窗</string>
+    <string name="dialog_save_failed">保存失败: %1$s</string>
+    <string name="dialog_upload_failed">上传失败: %1$s</string>
+
+    <string name="settings_log">日志</string>
+    <string name="settings_log_desc">运行日志保存在本地，可导出查看或分享。</string>
+    <string name="settings_log_export">导出日志</string>
+    <string name="log_export_empty">未找到日志文件。</string>
+
+    <string name="copy_error">复制错误</string>
 
     <!-- Dynamic strings -->
     <string name="version_format">v%1$s</string>
