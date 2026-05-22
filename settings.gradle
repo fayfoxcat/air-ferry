@@ -1,7 +1,9 @@
 pluginManagement {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/central' }
+        if (!System.getenv("CI")) {
+            maven { url 'https://maven.aliyun.com/repository/google' }
+            maven { url 'https://maven.aliyun.com/repository/central' }
+        }
         google()
         mavenCentral()
         gradlePluginPortal()
@@ -12,8 +14,10 @@ plugins {
 }
 dependencyResolutionManagement {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/central' }
+        if (!System.getenv("CI")) {
+            maven { url 'https://maven.aliyun.com/repository/google' }
+            maven { url 'https://maven.aliyun.com/repository/central' }
+        }
         google()
         mavenCentral()
     }

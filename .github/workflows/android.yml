@@ -43,17 +43,6 @@ jobs:
             sed -i "s/^android {/android {\n    namespace 'org.opencv'/" "$OPENCV_BUILD"
           fi
 
-      - name: Remove Aliyun mirrors (not reachable from GitHub Actions)
-        run: |
-          python3 - <<'EOF'
-          import re, pathlib
-          f = pathlib.Path("settings.gradle")
-          txt = f.read_text()
-          # Remove entire  maven { url '...aliyun...' }  blocks (single-line or multi-line)
-          txt = re.sub(r'\s*maven\s*\{[^}]*aliyun[^}]*\}', '', txt)
-          f.write_text(txt)
-          EOF
-
       - name: Cache Gradle
         uses: actions/cache@v4
         with:
@@ -112,16 +101,6 @@ jobs:
           if ! grep -q "namespace" "$OPENCV_BUILD"; then
             sed -i "s/^android {/android {\n    namespace 'org.opencv'/" "$OPENCV_BUILD"
           fi
-
-      - name: Remove Aliyun mirrors (not reachable from GitHub Actions)
-        run: |
-          python3 - <<'EOF'
-          import re, pathlib
-          f = pathlib.Path("settings.gradle")
-          txt = f.read_text()
-          txt = re.sub(r'\s*maven\s*\{[^}]*aliyun[^}]*\}', '', txt)
-          f.write_text(txt)
-          EOF
 
       - name: Cache Gradle
         uses: actions/cache@v4
