@@ -36,7 +36,93 @@ jobs:
           unzip -q opencv-4.5.0-android-sdk.zip
           echo "opencvsdk=${{ github.workspace }}/OpenCV-android-sdk" >> local.properties
 
+      - name: Patch OpenCV namespace (AGP compatibility)
+        run: |
+          OPENCV_BUILD="${{ github.workspace }}/OpenCV-android-sdk/sdk/build.gradle"
+          if ! grep -q "namespace" "$OPENCV_BUILD"; then
+            sed -i "s/^android {/android {\n    namespace 'org.opencv'/" "$OPENCV_BUILD"
+          fi
+
       - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: airferry-debug
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 7
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK 30.0.14904198
+        run: echo "y" | sdkmanager "ndk;30.0.14904198"
+
+      - name: Clone libcimbar
+        run: git clone --depth 1 --branch master https://github.com/sz3/libcimbar.git libcimbar
+
+      - name: Download OpenCV Android SDK
+        run: |
+          wget -q https://github.com/opencv/opencv/releases/download/4.5.0/opencv-4.5.0-android-sdk.zip
+          unzip -q opencv-4.5.0-android-sdk.zip
+          echo "opencvsdk=${{ github.workspace }}/OpenCV-android-sdk" >> local.properties
+
+      - name: Patch OpenCV namespace (AGP compatibility)
+        run: |
+          OPENCV_BUILD="${{ github.workspace }}/OpenCV-android-sdk/sdk/build.gradle"
+          if ! grep -q "namespace" "$OPENCV_BUILD"; then
+            sed -i "s/^android {/android {\n    namespace 'org.opencv'/" "$OPENCV_BUILD"
+          fi
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build release APK (unsigned)
+        run: ./gradlew assembleRelease
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: app/build/outputs/apk/release/*.apk
+          generate_release_notes: true
+
         uses: actions/cache@v4
         with:
           path: |
