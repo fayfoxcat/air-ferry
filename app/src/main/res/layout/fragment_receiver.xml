@@ -58,26 +58,7 @@
         android:layout_height="280dp"
         android:layout_gravity="center" />
 
-    <!-- Circular progress (speed indicator) — symmetric to mode_switch on the left -->
-    <cc.asac.airferry.CircularProgressView
-        android:id="@+id/circular_progress"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="20dp" />
-
-    <!-- Mode toggle button -->
-    <cc.asac.airferry.ModeSelToggle
-        android:id="@+id/mode_switch"
-        android:layout_width="48dp"
-        android:layout_height="54dp"
-        android:background="@drawable/mode_toggle_bg"
-        android:button="@drawable/modesel"
-        android:checked="false"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="20dp" />
-
-    <!-- Scan hint pill -->
+    <!-- Scan hint pill — moved up to avoid overlap with controls when English text is longer -->
     <TextView
         android:id="@+id/tv_scan_hint"
         android:layout_width="wrap_content"
@@ -91,8 +72,29 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="96dp"
         android:shadowColor="#44000000"
         android:shadowRadius="4" />
+
+    <!-- Circular progress (percentage indicator) — moved down, symmetric to mode_switch -->
+    <cc.asac.airferry.CircularProgressView
+        android:id="@+id/circular_progress"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Mode toggle button — moved down, symmetric to circular_progress -->
+    <cc.asac.airferry.ModeSelToggle
+        android:id="@+id/mode_switch"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/mode_toggle_bg"
+        android:button="@drawable/modesel"
+        android:checked="false"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="16dp" />
 
 </FrameLayout>

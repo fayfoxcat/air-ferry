@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- AirFerry transfers files to user-configured local network endpoints.
+         Cleartext is permitted because the upload URL is always LAN-local. -->
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

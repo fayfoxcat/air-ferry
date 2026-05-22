@@ -26,7 +26,18 @@
 
     <!-- Settings hints -->
     <string name="upload_url_hint">https://example.com/upload</string>
+    <string name="upload_url_label">URL</string>
+    <string name="upload_headers_label">Headers</string>
+    <string name="upload_headers_hint">Key:Value;Key2:Value2</string>
+    <string name="btn_test">Test</string>
+    <string name="btn_save_upload">Save</string>
+    <string name="upload_test_ok">Test passed — HTTP %1$d</string>
+    <string name="upload_test_fail">Test failed — HTTP %1$d</string>
+    <string name="upload_test_error">Test failed — %1$s</string>
+    <string name="upload_saved">Upload settings saved</string>
     <string name="error_invalid_url">Please enter a valid http/https URL</string>
+
+    <string name="save_success">Saved successfully</string>
 
     <!-- Confirm dialog -->
     <string name="confirm_file_title">File Received</string>
@@ -48,12 +59,44 @@
 
     <string name="settings_log">Log</string>
     <string name="settings_log_desc">Runtime logs are saved locally. Export to share or inspect.</string>
-    <string name="settings_log_export">Export Log</string>
+    <string name="settings_log_export">Export</string>
     <string name="log_export_empty">No log file found.</string>
 
     <string name="copy_error">Copy Error</string>
+    <string name="settings_log_view">View</string>
+    <string name="settings_log_clear">Clear</string>
+    <string name="settings_log_clear_confirm">Clear all log records?</string>
+
+    <!-- Files tab -->
+    <string name="tab_files">Files</string>
+    <string name="files_title">File List</string>
+    <string name="files_search_hint">Search by file name</string>
+    <string name="files_empty">No received files yet</string>
+    <string name="files_select_all">Select All</string>
+    <string name="files_deselect_all">Deselect All</string>
+    <string name="files_action_save">Save</string>
+    <string name="files_action_share">Share</string>
+    <string name="files_action_delete">Delete</string>
+    <string name="files_delete_confirm">Delete this file record?</string>
+    <string name="files_delete_multi_confirm">Delete %1$d selected files?</string>
+    <string name="files_deleted">File deleted</string>
+    <string name="files_multi_deleted">%1$d files deleted</string>
+    <string name="files_no_file_to_share">File not found</string>
+    <string name="files_receive_time">Received: %1$s</string>
+    <string name="files_receive_duration">Duration: %1$s</string>
 
     <!-- Dynamic strings -->
     <string name="version_format">v%1$s</string>
     <string name="progress_percent">%1$d%%</string>
+
+    <!-- About / Open Source / Check Update -->
+    <string name="settings_about_version">Version</string>
+    <string name="settings_opensource_url">https://github.com/sz-afa/air-ferry</string>
+    <string name="settings_opensource_btn">Open in browser</string>
+    <string name="settings_check_update">Check for updates</string>
+    <string name="update_checking">Checking…</string>
+    <string name="update_latest">Already up to date</string>
+    <string name="update_available">New version: %1$s</string>
+    <string name="update_download">Download</string>
+    <string name="update_failed">Failed to check for updates</string>
 </resources>

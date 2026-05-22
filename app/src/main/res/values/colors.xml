@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#7C4DFF</color>
-    <color name="colorPrimaryVariant">#6535E8</color>
+    <color name="colorPrimary">#1D74D9</color>
+    <color name="colorPrimaryVariant">#1558A8</color>
     <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="colorSecondary">#B0C4FF</color>
-    <color name="colorSecondaryVariant">#9BB5FF</color>
+    <color name="colorSecondary">#B3D4F0</color>
+    <color name="colorSecondaryVariant">#93BDE0</color>
     <color name="colorOnSecondary">#1a1a2e</color>
-    <color name="colorBackground">#F4F6FB</color>
+    <color name="colorBackground">#F0F8FF</color>
     <color name="colorSurface">#FFFFFF</color>
     <color name="colorOnSurface">#1C1B2E</color>
     <color name="colorOnBackground">#1C1B2E</color>
     <color name="colorError">#E53935</color>
     <color name="colorOnError">#FFFFFF</color>
     <color name="navBarBackground">#FAFAFA</color>
-    <color name="tabActiveColor">#7C4DFF</color>
+    <color name="tabActiveColor">#1D74D9</color>
     <color name="tabInactiveColor">#8A8699</color>
     <color name="cardBackground">#FFFFFF</color>
     <color name="dividerColor">#EAEDF5</color>

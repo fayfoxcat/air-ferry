@@ -26,7 +26,18 @@
 
     <!-- Settings hints -->
     <string name="upload_url_hint">https://example.com/upload</string>
+    <string name="upload_url_label">URL</string>
+    <string name="upload_headers_label">Headers</string>
+    <string name="upload_headers_hint">Key:Value;Key2:Value2</string>
+    <string name="btn_test">测试</string>
+    <string name="btn_save_upload">保存</string>
+    <string name="upload_test_ok">测试通过 — HTTP %1$d</string>
+    <string name="upload_test_fail">测试失败 — HTTP %1$d</string>
+    <string name="upload_test_error">测试失败 — %1$s</string>
+    <string name="upload_saved">上传配置已保存</string>
     <string name="error_invalid_url">请输入有效的 http/https 地址</string>
+
+    <string name="save_success">保存成功</string>
 
     <!-- Confirm dialog -->
     <string name="confirm_file_title">文件接收完成</string>
@@ -48,12 +59,44 @@
 
     <string name="settings_log">日志</string>
     <string name="settings_log_desc">运行日志保存在本地，可导出查看或分享。</string>
-    <string name="settings_log_export">导出日志</string>
+    <string name="settings_log_export">导出</string>
     <string name="log_export_empty">未找到日志文件。</string>
 
     <string name="copy_error">复制错误</string>
+    <string name="settings_log_view">查看</string>
+    <string name="settings_log_clear">清空</string>
+    <string name="settings_log_clear_confirm">确定清空所有日志记录？</string>
+
+    <!-- Files tab -->
+    <string name="tab_files">文件</string>
+    <string name="files_title">文件列表</string>
+    <string name="files_search_hint">按文件名搜索</string>
+    <string name="files_empty">暂无接收文件</string>
+    <string name="files_select_all">全选</string>
+    <string name="files_deselect_all">取消全选</string>
+    <string name="files_action_save">保存</string>
+    <string name="files_action_share">分享</string>
+    <string name="files_action_delete">删除</string>
+    <string name="files_delete_confirm">确定删除此文件记录？</string>
+    <string name="files_delete_multi_confirm">确定删除 %1$d 个选中文件？</string>
+    <string name="files_deleted">文件已删除</string>
+    <string name="files_multi_deleted">%1$d 个文件已删除</string>
+    <string name="files_no_file_to_share">文件未找到</string>
+    <string name="files_receive_time">接收时间: %1$s</string>
+    <string name="files_receive_duration">接收耗时: %1$s</string>
 
     <!-- Dynamic strings -->
     <string name="version_format">v%1$s</string>
     <string name="progress_percent">%1$d%%</string>
+
+    <!-- About / Open Source / Check Update -->
+    <string name="settings_about_version">版本</string>
+    <string name="settings_opensource_url">https://github.com/sz-afa/air-ferry</string>
+    <string name="settings_opensource_btn">在浏览器中打开</string>
+    <string name="settings_check_update">检查更新</string>
+    <string name="update_checking">检查中…</string>
+    <string name="update_latest">已是最新版本</string>
+    <string name="update_available">发现新版本：%1$s</string>
+    <string name="update_download">下载</string>
+    <string name="update_failed">检查更新失败</string>
 </resources>

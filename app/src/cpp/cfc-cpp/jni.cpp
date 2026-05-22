@@ -220,10 +220,18 @@ Java_cc_asac_airferry_ReceiverFragment_shutdownJNI(JNIEnv *env, jobject instance
 		_proc->stop();
 	_proc = nullptr;
 	_completed.clear();
+	_calls = 0;
 	_transferStatus = 0;
 	_frameDecodeSnapshot = 0;
 	_frameSuccessSnapshot = 0;
+	MultiThreadedDecoder::count = 0;
 	MultiThreadedDecoder::bytes = 0;
+	MultiThreadedDecoder::perfect = 0;
+	MultiThreadedDecoder::decoded = 0;
+	MultiThreadedDecoder::decodeTicks = 0;
+	MultiThreadedDecoder::scanned = 0;
+	MultiThreadedDecoder::scanTicks = 0;
+	MultiThreadedDecoder::extractTicks = 0;
 }
 
 void JNICALL
