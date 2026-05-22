@@ -36,12 +36,14 @@ jobs:
           unzip -q opencv-4.5.0-android-sdk.zip
           echo "opencvsdk=${{ github.workspace }}/OpenCV-android-sdk" >> local.properties
 
-      - name: Patch OpenCV namespace (AGP compatibility)
+      - name: Patch OpenCV SDK (namespace + jvmTarget)
         run: |
           OPENCV_BUILD="${{ github.workspace }}/OpenCV-android-sdk/sdk/build.gradle"
           if ! grep -q "namespace" "$OPENCV_BUILD"; then
             sed -i "s/^android {/android {\n    namespace 'org.opencv'/" "$OPENCV_BUILD"
           fi
+          sed -i "s/jvmTarget = ['\"]1\.6['\"]/jvmTarget = '1.8'/" "$OPENCV_BUILD"
+          sed -i "s/jvmTarget = ['\"]6['\"]/jvmTarget = '1.8'/" "$OPENCV_BUILD"
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -95,12 +97,14 @@ jobs:
           unzip -q opencv-4.5.0-android-sdk.zip
           echo "opencvsdk=${{ github.workspace }}/OpenCV-android-sdk" >> local.properties
 
-      - name: Patch OpenCV namespace (AGP compatibility)
+      - name: Patch OpenCV SDK (namespace + jvmTarget)
         run: |
           OPENCV_BUILD="${{ github.workspace }}/OpenCV-android-sdk/sdk/build.gradle"
           if ! grep -q "namespace" "$OPENCV_BUILD"; then
             sed -i "s/^android {/android {\n    namespace 'org.opencv'/" "$OPENCV_BUILD"
           fi
+          sed -i "s/jvmTarget = ['\"]1\.6['\"]/jvmTarget = '1.8'/" "$OPENCV_BUILD"
+          sed -i "s/jvmTarget = ['\"]6['\"]/jvmTarget = '1.8'/" "$OPENCV_BUILD"
 
       - name: Cache Gradle
         uses: actions/cache@v4
