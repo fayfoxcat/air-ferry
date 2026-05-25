@@ -4,7 +4,7 @@
 
 AirFerry 是一款 Android **纯接收端**应用，通过摄像头扫描动态彩色条码来接收文件。**无需任何无线连接**（WiFi、蓝牙、NFC……），在飞行模式下同样可以正常工作。
 
-发送端请使用网页版 [cimbar.org](https://cimbar.org)（推荐）或 libcimbar 的 `cimbar_send`。
+发送端请使用网页版 [airferry.asac.cc](https://airferry.asac.cc)（推荐）或 libcimbar 的 `cimbar_send`。
 
 ## 下载
 
@@ -145,4 +145,4 @@ bash setup.sh
 
 - 上游仓库：[sz3/cfc](https://github.com/sz3/cfc)
 - libcimbar：[sz3/libcimbar](https://github.com/sz3/libcimbar)
-- 在线发送端：[https://cimbar.org](https://cimbar.org)
+- 在线发送端：[https://airferry.asac.cc](https://airferry.asac.cc)
