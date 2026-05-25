@@ -55,6 +55,18 @@ let _frameCount = 0;
 let _totalFrames = 0;  // blocks_required from C layer (= real 100% mark)
 let _cycleFrames = 0;  // last frameRes, used to detect cycle wrap-around
 let _lastFrameTime = 0;
+let _prevFrameRes = -1; // previous frameRes, used to detect fountain stream restart
+
+// ── Temporal dithering (sub-pixel jitter) ─────────────────────────────────
+// Cycles a 4-frame pattern: center → top-left → center → bottom-right.
+// Each step shifts by ~8px at reference 1080p, scaled to actual image size.
+// This dither helps phone cameras by sampling barcode cells from slightly
+// different sensor pixel positions across frames, enabling super-resolution
+// reconstruction and reducing color aliasing / moiré artifacts.
+let _offscreen    = null;
+let _offscreenCtx = null;
+let _shakeIdx     = 0;
+const SHAKE_DIRS  = [[0,0], [-1,-1], [0,0], [1,1]];
 
 // ─── DOM refs ─────────────────────────────────────────────────────────────────
 const elLoading     = document.getElementById('loading');
@@ -328,6 +340,16 @@ function renderFrame() {
 
     ensureCanvas(w, h);
 
+    // ── Temporal dithering: sub-pixel translation per frame ──────────
+    // Shake ~8px at reference 1080p, scaled to actual image resolution.
+    // Using drawImage (not putImageData) enables browser sub-pixel
+    // interpolation, which dithers barcode cell boundaries across frames.
+    const shakePx = 8.0 * Math.min(w, h) / 1080.0;
+    const [dx, dy] = SHAKE_DIRS[_shakeIdx];
+    _shakeIdx = (_shakeIdx + 1) % 4;
+    const offX = dx * shakePx;
+    const offY = dy * shakePx;
+
     // Convert RGB → RGBA for ImageData
     const rgb  = Module.HEAPU8.subarray(imgPtr, imgPtr + byteLen);
     const rgba = new Uint8ClampedArray(w * h * 4);
@@ -337,7 +359,21 @@ function renderFrame() {
       rgba[j + 2] = rgb[i + 2];
       rgba[j + 3] = 255;
     }
-    _ctx.putImageData(new ImageData(rgba, w, h), 0, 0);
+
+    // Stage to offscreen canvas (putImageData ignores transforms)
+    if (!_offscreen || _offscreen.width !== w || _offscreen.height !== h) {
+      _offscreen = document.createElement('canvas');
+      _offscreen.width  = w;
+      _offscreen.height = h;
+      _offscreenCtx = _offscreen.getContext('2d', { willReadFrequently: false });
+    }
+    _offscreenCtx.putImageData(new ImageData(rgba, w, h), 0, 0);
+
+    // Draw with sub-pixel jitter offset onto the main canvas
+    _ctx.fillStyle = '#000';
+    _ctx.fillRect(0, 0, w, h);
+    _ctx.imageSmoothingEnabled = true;
+    _ctx.drawImage(_offscreen, offX, offY, w, h);
   }
 
   _frameCount++;
@@ -353,6 +389,13 @@ function renderFrame() {
     }
     _cycleFrames = frameRes;
   }
+
+  // Reset temporal dithering phase when the fountain stream restarts
+  // (frameRes jumps from a high value back to near-zero).
+  if (_prevFrameRes > frameRes) {
+    _shakeIdx = 0;
+  }
+  _prevFrameRes = frameRes;
 
   // Progress: clamp to 100% at blocks_required, keep cycling visually after that
   const cyclePos = _totalFrames > 0
