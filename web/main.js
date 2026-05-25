@@ -331,28 +331,30 @@ function renderFrame() {
   Module._free(ptrSlot);
 
   if (byteLen > 0 && imgPtr) {
-    // Determine canvas dimensions from aspect ratio + byte count
+    // Determine image dimensions from aspect ratio + byte count
     // The frame is RGB (3 channels). byteLen = w * h * 3
     const aspect = Module._cimbare_get_aspect_ratio();
     // w/h = aspect, w*h = byteLen/3  →  w = sqrt(byteLen/3 * aspect)
-    const w = Math.round(Math.sqrt((byteLen / 3) * aspect));
-    const h = Math.round(byteLen / 3 / w);
-
-    ensureCanvas(w, h);
+    const imgW = Math.round(Math.sqrt((byteLen / 3) * aspect));
+    const imgH = Math.round(byteLen / 3 / imgW);
 
     // ── Temporal dithering: sub-pixel translation per frame ──────────
     // Shake ~8px at reference 1080p, scaled to actual image resolution.
-    // Using drawImage (not putImageData) enables browser sub-pixel
-    // interpolation, which dithers barcode cell boundaries across frames.
-    const shakePx = 8.0 * Math.min(w, h) / 1080.0;
+    const shakePx = 8.0 * Math.min(imgW, imgH) / 1080.0;
+    const pad     = Math.ceil(shakePx);
     const [dx, dy] = SHAKE_DIRS[_shakeIdx];
     _shakeIdx = (_shakeIdx + 1) % 4;
     const offX = dx * shakePx;
     const offY = dy * shakePx;
 
+    // Canvas is padded so the shake offset never exposes black edges
+    const cw = imgW + pad * 2;
+    const ch = imgH + pad * 2;
+    ensureCanvas(cw, ch);
+
     // Convert RGB → RGBA for ImageData
     const rgb  = Module.HEAPU8.subarray(imgPtr, imgPtr + byteLen);
-    const rgba = new Uint8ClampedArray(w * h * 4);
+    const rgba = new Uint8ClampedArray(imgW * imgH * 4);
     for (let i = 0, j = 0; i < byteLen; i += 3, j += 4) {
       rgba[j]     = rgb[i];
       rgba[j + 1] = rgb[i + 1];
@@ -360,20 +362,20 @@ function renderFrame() {
       rgba[j + 3] = 255;
     }
 
-    // Stage to offscreen canvas (putImageData ignores transforms)
-    if (!_offscreen || _offscreen.width !== w || _offscreen.height !== h) {
+    // Stage image to offscreen canvas (putImageData ignores transforms)
+    if (!_offscreen || _offscreen.width !== imgW || _offscreen.height !== imgH) {
       _offscreen = document.createElement('canvas');
-      _offscreen.width  = w;
-      _offscreen.height = h;
+      _offscreen.width  = imgW;
+      _offscreen.height = imgH;
       _offscreenCtx = _offscreen.getContext('2d', { willReadFrequently: false });
     }
-    _offscreenCtx.putImageData(new ImageData(rgba, w, h), 0, 0);
+    _offscreenCtx.putImageData(new ImageData(rgba, imgW, imgH), 0, 0);
 
-    // Draw with sub-pixel jitter offset onto the main canvas
+    // Draw with sub-pixel jitter — padding prevents edge clipping
     _ctx.fillStyle = '#000';
-    _ctx.fillRect(0, 0, w, h);
+    _ctx.fillRect(0, 0, cw, ch);
     _ctx.imageSmoothingEnabled = true;
-    _ctx.drawImage(_offscreen, offX, offY, w, h);
+    _ctx.drawImage(_offscreen, pad + offX, pad + offY, imgW, imgH);
   }
 
   _frameCount++;
