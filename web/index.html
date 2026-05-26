@@ -39,7 +39,7 @@
 
       --radius:       10px;
       --radius-sm:    6px;
-      --sidebar:      448px;            /* 280 × 1.6 ≈ 448 */
+      --sidebar:      358px;            /* 448 × 0.8 */
     }
 
     html, body {
@@ -336,8 +336,7 @@
       flex-shrink: 0;
       background: var(--sidebar-bg);
     }
-    .btn-row { display: flex; gap: 10px; }
-    .btn-row .btn { flex: 1; }
+    #sidebar-footer .btn { width: 100%; }
 
     .btn {
       display: flex;
@@ -608,16 +607,11 @@
 
       </div><!-- /sidebar-body -->
 
-      <!-- Footer buttons -->
+      <!-- Footer button -->
       <div id="sidebar-footer">
-        <div class="btn-row">
-          <button class="btn btn-primary" id="btn-encode" disabled>
-            ▶&nbsp;开始编码
-          </button>
-          <button class="btn btn-danger" id="btn-stop" disabled>
-            ■&nbsp;停止
-          </button>
-        </div>
+        <button class="btn btn-primary" id="btn-encode" disabled>
+          ▶&nbsp;开始编码
+        </button>
       </div>
 
     </aside>

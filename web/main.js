@@ -86,7 +86,6 @@ const elProgressBar = document.getElementById('progress-bar');
 const elProgressLbl = document.getElementById('progress-label');
 const elStatus      = document.getElementById('status');
 const elBtnEncode   = document.getElementById('btn-encode');
-const elBtnStop     = document.getElementById('btn-stop');
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function setStatus(msg, cls = '') {
@@ -201,8 +200,10 @@ elFpsRange.addEventListener('input', () => {
 });
 
 // ─── Encode ───────────────────────────────────────────────────────────────────
-elBtnEncode.addEventListener('click', startEncode);
-elBtnStop.addEventListener('click', stopAnimation);
+elBtnEncode.addEventListener('click', () => {
+  if (_running) stopAnimation();
+  else startEncode();
+});
 
 async function startEncode() {
   if (!Module || !_file) return;
@@ -210,7 +211,6 @@ async function startEncode() {
   stopAnimation();
   setStatus('正在读取文件…', 'info');
   elBtnEncode.disabled = true;
-  elBtnStop.disabled   = false;
 
   const modeVal     = parseInt(elModeSelect.value, 10);
   const compression = parseInt(elCompRange.value, 10);
@@ -233,7 +233,6 @@ async function startEncode() {
   } catch (e) {
     setStatus('读取文件失败：' + e.message, 'error');
     elBtnEncode.disabled = false;
-    elBtnStop.disabled   = true;
     return;
   }
 
@@ -249,7 +248,6 @@ async function startEncode() {
   if (initRes < 0) {
     setStatus(`init_encode 失败 (${initRes})`, 'error');
     elBtnEncode.disabled = false;
-    elBtnStop.disabled   = true;
     return;
   }
 
@@ -280,7 +278,6 @@ async function startEncode() {
   if (encRes < 0) {
     setStatus(`encode 失败 (${encRes})`, 'error');
     elBtnEncode.disabled = false;
-    elBtnStop.disabled   = true;
     return;
   }
 
@@ -299,6 +296,9 @@ async function startEncode() {
 
   setProgress(0, _totalFrames);
   setStatus('编码中…', 'info');
+  elBtnEncode.textContent = '■ 终止编码';
+  elBtnEncode.classList.add('btn-danger');
+  elBtnEncode.disabled = false;
 
   scheduleNextFrame();
 }
@@ -359,17 +359,15 @@ function renderFrame() {
     }
 
     // ── Temporal dithering ──────────────────────────────────────────
+    // Shake by a constant ~8 display pixels.  CimbWriter's built-in
+    // 8 px black border absorbs the movement — no extra padding needed.
     const shakePx = 8.0 * Math.min(imgW, imgH) / 1080.0;
-    const pad     = Math.ceil(shakePx);
     const [dx, dy] = SHAKE_DIRS[_shakeIdx];
     _shakeIdx = (_shakeIdx + 1) % 4;
     const offX = dx * shakePx;
     const offY = dy * shakePx;
 
-    // Canvas is padded so the shake offset never exposes black edges
-    const cw = imgW + pad * 2;
-    const ch = imgH + pad * 2;
-    ensureCanvas(cw, ch);
+    ensureCanvas(imgW, imgH);
 
     // Convert RGB → RGBA for ImageData
     const rgb  = Module.HEAPU8.subarray(imgPtr, imgPtr + byteLen);
@@ -390,11 +388,10 @@ function renderFrame() {
     }
     _offscreenCtx.putImageData(new ImageData(rgba, imgW, imgH), 0, 0);
 
-    // Draw with sub-pixel jitter offset; padding prevents edge clipping
     _ctx.fillStyle = '#000';
-    _ctx.fillRect(0, 0, cw, ch);
+    _ctx.fillRect(0, 0, imgW, imgH);
     _ctx.imageSmoothingEnabled = true;
-    _ctx.drawImage(_offscreen, pad + offX, pad + offY, imgW, imgH);
+    _ctx.drawImage(_offscreen, offX, offY, imgW, imgH);
   }
 
   _frameCount++;
@@ -440,8 +437,9 @@ function stopAnimation() {
     clearTimeout(_rafId);
     _rafId = null;
   }
+  elBtnEncode.textContent = '▶ 开始编码';
+  elBtnEncode.classList.remove('btn-danger');
   elBtnEncode.disabled = !(_file && Module);
-  elBtnStop.disabled   = true;
   if (_frameCount > 0)
     setStatus(`已停止（共渲染 ${_frameCount} 帧）`);
   elFrameInfo.classList.remove('visible');
