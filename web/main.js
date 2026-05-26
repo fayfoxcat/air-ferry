@@ -331,15 +331,34 @@ function renderFrame() {
   Module._free(ptrSlot);
 
   if (byteLen > 0 && imgPtr) {
-    // Determine image dimensions from aspect ratio + byte count
-    // The frame is RGB (3 channels). byteLen = w * h * 3
-    const aspect = Module._cimbare_get_aspect_ratio();
-    // w/h = aspect, w*h = byteLen/3  →  w = sqrt(byteLen/3 * aspect)
-    const imgW = Math.round(Math.sqrt((byteLen / 3) * aspect));
-    const imgH = Math.round(byteLen / 3 / imgW);
+    // Recover exact image dimensions from byteLen + approximate aspect ratio.
+    // cimbare_get_aspect_ratio() may diverge from the actual cv::Mat
+    // because cimbare_init_window() rounds dimensions up to multiples of 4.
+    const totalPx      = byteLen / 3;
+    const approxAspect = Module._cimbare_get_aspect_ratio();
+    const initW        = Math.round(Math.sqrt(totalPx * approxAspect));
+    let imgW = initW;
+    let imgH;
 
-    // ── Temporal dithering: sub-pixel translation per frame ──────────
-    // Shake ~8px at reference 1080p, scaled to actual image resolution.
+    // Search nearby widths for one that evenly divides totalPx
+    for (let dw = 0; dw <= 12; ++dw) {
+      for (const w of [initW - dw, initW + dw]) {
+        if (w <= 0) continue;
+        const h = totalPx / w;
+        if (h === Math.floor(h) && Math.abs(w / h - approxAspect) < 0.05) {
+          imgW = w;
+          imgH = h;
+          dw = 999;
+          break;
+        }
+      }
+    }
+    if (!imgH) {
+      imgH = Math.round(totalPx / imgW);
+      imgW = Math.round(totalPx / imgH);
+    }
+
+    // ── Temporal dithering ──────────────────────────────────────────
     const shakePx = 8.0 * Math.min(imgW, imgH) / 1080.0;
     const pad     = Math.ceil(shakePx);
     const [dx, dy] = SHAKE_DIRS[_shakeIdx];
@@ -362,7 +381,7 @@ function renderFrame() {
       rgba[j + 3] = 255;
     }
 
-    // Stage image to offscreen canvas (putImageData ignores transforms)
+    // Stage to offscreen canvas (putImageData ignores transforms)
     if (!_offscreen || _offscreen.width !== imgW || _offscreen.height !== imgH) {
       _offscreen = document.createElement('canvas');
       _offscreen.width  = imgW;
@@ -371,7 +390,7 @@ function renderFrame() {
     }
     _offscreenCtx.putImageData(new ImageData(rgba, imgW, imgH), 0, 0);
 
-    // Draw with sub-pixel jitter — padding prevents edge clipping
+    // Draw with sub-pixel jitter offset; padding prevents edge clipping
     _ctx.fillStyle = '#000';
     _ctx.fillRect(0, 0, cw, ch);
     _ctx.imageSmoothingEnabled = true;
