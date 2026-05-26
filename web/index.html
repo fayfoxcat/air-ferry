@@ -494,18 +494,60 @@
     /* ════════════════════════════════════════════════════════════════════
        Responsive
     ════════════════════════════════════════════════════════════════════ */
+    #sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 8px; right: 8px;
+      z-index: 300;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(6px);
+      color: var(--text);
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
     @media (max-width: 768px) {
-      :root { --sidebar: 100vw; }
       #app { flex-direction: column; }
+
       #sidebar {
-        width: 100%; min-width: 0;
-        height: auto; max-height: 60vh;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw;
+        height: auto;
+        max-height: 60vh;
+        min-width: 0;
+        overflow-y: auto;
+        z-index: 200;
         border-right: none;
         border-bottom: 1px solid var(--border);
-        box-shadow: 0 4px 12px rgba(26,111,212,0.1);
+        border-radius: 0 0 var(--radius) var(--radius);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        transform: translateY(0);
+        transition: transform 0.25s ease;
       }
-      #canvas-panel { height: 40vh; }
-      html, body { overflow: auto; }
+      #sidebar.collapsed {
+        transform: translateY(-100%);
+      }
+
+      #canvas-panel {
+        position: fixed;
+        inset: 0;
+        height: 100vh;
+        width: 100vw;
+      }
+
+      #sidebar-toggle {
+        display: flex;
+      }
+
+      html, body { overflow: hidden; }
     }
   </style>
 </head>
@@ -516,6 +558,8 @@
     <div class="spinner"></div>
     <p>正在加载 WASM 模块…</p>
   </div>
+
+  <button id="sidebar-toggle" aria-label="切换控制面板" title="控制面板">☰</button>
 
   <div id="app">
 

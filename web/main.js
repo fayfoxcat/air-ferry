@@ -86,6 +86,23 @@ const elProgressBar = document.getElementById('progress-bar');
 const elProgressLbl = document.getElementById('progress-label');
 const elStatus      = document.getElementById('status');
 const elBtnEncode   = document.getElementById('btn-encode');
+const elSidebar     = document.getElementById('sidebar');
+const elSidebarToggle = document.getElementById('sidebar-toggle');
+
+// ─── Mobile sidebar toggle ──────────────────────────────────────────────────
+const _isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+
+function sidebarShow() {
+  elSidebar.classList.remove('collapsed');
+  elSidebarToggle.textContent = '✕';
+}
+function sidebarHide() {
+  elSidebar.classList.add('collapsed');
+  elSidebarToggle.textContent = '☰';
+}
+elSidebarToggle.addEventListener('click', () => {
+  elSidebar.classList.contains('collapsed') ? sidebarShow() : sidebarHide();
+});
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function setStatus(msg, cls = '') {
@@ -299,6 +316,9 @@ async function startEncode() {
   elBtnEncode.textContent = '■ 终止编码';
   elBtnEncode.classList.add('btn-danger');
   elBtnEncode.disabled = false;
+
+  // On mobile, hide sidebar so the barcode fills the screen
+  if (_isMobile()) sidebarHide();
 
   scheduleNextFrame();
 }
