@@ -99,4 +99,5 @@
     <string name="update_available">发现新版本：%1$s</string>
     <string name="update_download">下载</string>
     <string name="update_failed">检查更新失败</string>
+    <string name="native_load_failed">原生库加载失败: %1$s</string>
 </resources>

@@ -234,11 +234,4 @@ Java_cc_asac_airferry_ReceiverFragment_shutdownJNI(JNIEnv *env, jobject instance
 	MultiThreadedDecoder::extractTicks = 0;
 }
 
-void JNICALL
-Java_cc_asac_airferry_ReceiverFragment_resetCompletedJNI(JNIEnv *env, jobject instance, jstring filenameObj) {
-	string filename = jstring_to_cppstr(env, filenameObj);
-	std::lock_guard<std::mutex> lock(_mutex);
-	_completed.erase(filename);
-}
-
 }

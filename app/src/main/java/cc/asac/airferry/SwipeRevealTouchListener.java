@@ -68,7 +68,12 @@ public class SwipeRevealTouchListener implements RecyclerView.OnItemTouchListene
                 if (child != null) {
                     int pos = rv.getChildAdapterPosition(child);
                     if (activePosition != RecyclerView.NO_POSITION && activePosition != pos) {
-                        animateTo(0);
+                        View oldContent = activeChild != null
+                                ? activeChild.findViewById(R.id.item_content) : null;
+                        if (oldContent != null) {
+                            oldContent.animate().translationX(0).setDuration(150).start();
+                        }
+                        currentDx = 0;
                     }
                     activePosition = pos;
                     activeChild = child;

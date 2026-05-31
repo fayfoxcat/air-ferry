@@ -219,7 +219,7 @@ public class FilesFragment extends Fragment {
         Uri uri = FileProvider.getUriForFile(requireContext(),
                 requireContext().getPackageName() + ".fileprovider", new File(r.filePath));
         Intent si = new Intent(Intent.ACTION_SEND);
-        si.setType(getMimeType(r.fileName));
+        si.setType(MimeTypeHelper.fromFilename(r.fileName));
         si.putExtra(Intent.EXTRA_STREAM, uri);
         si.putExtra(Intent.EXTRA_SUBJECT, r.fileName);
         si.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -307,7 +307,7 @@ public class FilesFragment extends Fragment {
         Intent si;
         if (uris.size() == 1) {
             si = new Intent(Intent.ACTION_SEND);
-            si.setType(getMimeType(adapter.getRecordAt(selected.iterator().next()).fileName));
+            si.setType(MimeTypeHelper.fromFilename(adapter.getRecordAt(selected.iterator().next()).fileName));
             si.putExtra(Intent.EXTRA_STREAM, uris.get(0));
         } else {
             si = new Intent(Intent.ACTION_SEND_MULTIPLE);
@@ -349,20 +349,4 @@ public class FilesFragment extends Fragment {
         }
     }
 
-    private String getMimeType(String filename) {
-        String ext = filename.contains(".")
-                ? filename.substring(filename.lastIndexOf('.') + 1).toLowerCase()
-                : "";
-        switch (ext) {
-            case "jpg": case "jpeg": return "image/jpeg";
-            case "png":  return "image/png";
-            case "gif":  return "image/gif";
-            case "mp4":  return "video/mp4";
-            case "mp3":  return "audio/mpeg";
-            case "pdf":  return "application/pdf";
-            case "zip":  return "application/zip";
-            case "txt":  return "text/plain";
-            default:     return "*/*";
-        }
-    }
 }

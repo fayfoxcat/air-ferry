@@ -416,7 +416,7 @@ public class ReceiverFragment extends Fragment implements CvCameraViewListener2 
             });
         }
 
-        if (progressPct >= 0) {
+        if (progressPct >= 0 && !this.isSaving) {
             final int pct = progressPct;
             activity.runOnUiThread(() -> {
                 if (circularProgress != null) {
@@ -597,7 +597,7 @@ public class ReceiverFragment extends Fragment implements CvCameraViewListener2 
                         a.getPackageName() + ".fileprovider",
                         dst);
 
-                String mime = getMimeType(filename);
+                String mime = MimeTypeHelper.fromFilename(filename);
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType(mime);
                 shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -618,23 +618,6 @@ public class ReceiverFragment extends Fragment implements CvCameraViewListener2 
                 });
             }
         }).start();
-    }
-
-    private String getMimeType(String filename) {
-        String ext = filename.contains(".")
-                ? filename.substring(filename.lastIndexOf('.') + 1).toLowerCase()
-                : "";
-        switch (ext) {
-            case "jpg": case "jpeg": return "image/jpeg";
-            case "png":  return "image/png";
-            case "gif":  return "image/gif";
-            case "mp4":  return "video/mp4";
-            case "mp3":  return "audio/mpeg";
-            case "pdf":  return "application/pdf";
-            case "zip":  return "application/zip";
-            case "txt":  return "text/plain";
-            default:     return "*/*";
-        }
     }
 
     private void executeUpload(String filename, String uploadUrl, String uploadHeaders,

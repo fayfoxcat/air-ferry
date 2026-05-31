@@ -15,11 +15,14 @@ public class AppLogger {
     private static final String TAG = "AppLogger";
     private static final String LOG_FILE = "airferry_run.log";
     private static final long MAX_BYTES = 2 * 1024 * 1024; // 2 MB cap
+    private static final int TRIM_CHECK_INTERVAL = 100;
 
     private static AppLogger instance;
     private final File logFile;
-    private final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-    private final SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    private int writeCount = 0;
+
+    private static final ThreadLocal<SimpleDateFormat> dateFmtTL =
+            ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US));
 
     private AppLogger(Context ctx) {
         logFile = new File(ctx.getFilesDir(), LOG_FILE);
@@ -51,14 +54,12 @@ public class AppLogger {
         Log.w(tag, msg);
     }
 
-    /** Format file size in human-readable form */
     public static String formatSize(long bytes) {
         if (bytes < 1024) return bytes + " B";
         if (bytes < 1024 * 1024) return String.format(Locale.US, "%.1f KB", bytes / 1024.0);
         return String.format(Locale.US, "%.2f MB", bytes / (1024.0 * 1024.0));
     }
 
-    /** Format duration in human-readable form */
     public static String formatDuration(long ms) {
         if (ms < 1000) return ms + "ms";
         long sec = ms / 1000;
@@ -69,36 +70,38 @@ public class AppLogger {
         return min + "m" + sec + "s";
     }
 
-    /** Format speed (bytes per second) */
     public static String formatSpeed(long bytesPerSec) {
         if (bytesPerSec < 1024) return bytesPerSec + " B/s";
         if (bytesPerSec < 1024 * 1024) return String.format(Locale.US, "%.1f KB/s", bytesPerSec / 1024.0);
         return String.format(Locale.US, "%.2f MB/s", bytesPerSec / (1024.0 * 1024.0));
     }
 
-    /** Get current timestamp string for date fmt */
     public String now() {
-        return dateFmt.format(new Date());
+        return dateFmtTL.get().format(new Date());
     }
 
     private synchronized void write(String level, String tag, String msg) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(logFile, true))) {
-            bw.write(fmt.format(new Date()) + " " + level + "/" + tag + ": " + msg);
+            bw.write(dateFmtTL.get().format(new Date()) + " " + level + "/" + tag + ": " + msg);
             bw.newLine();
         } catch (IOException e) {
             Log.e(TAG, "write failed: " + e.getMessage());
         }
+        if (++writeCount % TRIM_CHECK_INTERVAL == 0) {
+            trimIfNeeded();
+        }
     }
 
-    private void trimIfNeeded() {
+    private synchronized void trimIfNeeded() {
         if (!logFile.exists() || logFile.length() <= MAX_BYTES) return;
-        // Keep the last half by reading tail bytes
         try {
             byte[] bytes = java.nio.file.Files.readAllBytes(logFile.toPath());
             int start = (int) (bytes.length / 2);
-            // advance to next newline
             while (start < bytes.length && bytes[start] != '\n') start++;
-            start++;
+            if (start >= bytes.length) {
+                // 后半部分无换行符，直接从中间截断
+                start = (int) (bytes.length / 2);
+            }
             try (java.io.FileOutputStream fos = new java.io.FileOutputStream(logFile, false)) {
                 fos.write(bytes, start, bytes.length - start);
             }

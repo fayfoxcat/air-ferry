@@ -244,6 +244,10 @@ public class MainActivity extends AppCompatActivity {
             logger.i(TAG, "Native libraries loaded successfully");
         } catch (UnsatisfiedLinkError e) {
             logger.e(TAG, "Failed to load native libraries: " + e.getMessage());
+            runOnUiThread(() ->
+                android.widget.Toast.makeText(this,
+                    getString(R.string.native_load_failed, e.getMessage()),
+                    android.widget.Toast.LENGTH_LONG).show());
         }
     }
 
