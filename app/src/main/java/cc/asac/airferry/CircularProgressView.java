@@ -26,7 +26,6 @@ public class CircularProgressView extends View {
     private final Paint trackPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint arcPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint numPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint unitPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     // ── 几何 ──────────────────────────────────────────────────────────────────
@@ -102,8 +101,6 @@ public class CircularProgressView extends View {
         numPaint.setFakeBoldText(true);
         numPaint.setTextAlign(Paint.Align.CENTER);
 
-        unitPaint.setColor(0xCCFFFFFF);
-        unitPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     // ── 尺寸变化 ──────────────────────────────────────────────────────────────
@@ -121,7 +118,6 @@ public class CircularProgressView extends View {
         arcRect.set(inset, inset, w - inset, h - inset);
 
         numPaint.setTextSize(size * 0.22f);
-        unitPaint.setTextSize(size * 0.13f);
     }
 
     // ── 绘制 ──────────────────────────────────────────────────────────────────
@@ -144,28 +140,16 @@ public class CircularProgressView extends View {
     }
 
     private void drawPercentText(Canvas canvas, float cx, float cy) {
-        String numStr;
-        String unitStr = "%";
-
+        String text;
         if (displayProgress <= 0f && targetProgress == 0) {
-            numStr = "--";
+            text = "--";
         } else {
-            numStr = String.valueOf(Math.round(displayProgress));
+            text = Math.round(displayProgress) + "%";
         }
 
-        Paint.FontMetrics numFm = numPaint.getFontMetrics();
-        Paint.FontMetrics unitFm = unitPaint.getFontMetrics();
-
-        float numLineH = numFm.descent - numFm.ascent;
-        float unitLineH = unitFm.descent - unitFm.ascent;
-        float gap = getHeight() * 0.04f;
-        float totalH = numLineH + gap + unitLineH;
-
-        float numBaseline = cy - totalH / 2f - numFm.ascent;
-        float unitBaseline = numBaseline + numFm.descent + gap - unitFm.ascent;
-
-        canvas.drawText(numStr, cx, numBaseline, numPaint);
-        canvas.drawText(unitStr, cx, unitBaseline, unitPaint);
+        Paint.FontMetrics fm = numPaint.getFontMetrics();
+        float baseline = cy - (fm.descent + fm.ascent) / 2f;
+        canvas.drawText(text, cx, baseline, numPaint);
     }
 
     // ── 公开 API ──────────────────────────────────────────────────────────────

@@ -95,6 +95,16 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
+        // 处理 App Shortcut / Intent extra 跳转到指定 Tab
+        String openTab = getIntent().getStringExtra("open_tab");
+        if ("files".equals(openTab)) {
+            bottomNav.setSelectedItemId(R.id.nav_files);
+        } else if ("settings".equals(openTab)) {
+            bottomNav.setSelectedItemId(R.id.nav_settings);
+        } else {
+            bottomNav.setSelectedItemId(R.id.nav_receiver);
+        }
+
         // Right-edge swipe-back gesture
         setupEdgeBackGesture();
 
@@ -131,6 +141,20 @@ public class MainActivity extends AppCompatActivity {
                 rotateTabItems(itemRotation);
             }
         };
+    }
+
+    @Override
+    protected void onNewIntent(android.content.Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        String openTab = intent.getStringExtra("open_tab");
+        if ("files".equals(openTab) && bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_files);
+        } else if ("settings".equals(openTab) && bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_settings);
+        } else if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_receiver);
+        }
     }
 
     @Override

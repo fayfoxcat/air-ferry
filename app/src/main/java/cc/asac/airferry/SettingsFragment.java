@@ -29,6 +29,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -45,7 +46,7 @@ public class SettingsFragment extends Fragment {
     private static final String TAG = "SettingsFragment";
     private static final String PREFS_NAME = "airferry_settings";
     private static final String GITHUB_RELEASES_API =
-            "https://api.github.com/repos/sz-afa/air-ferry/releases/latest";
+            "https://api.github.com/repos/fayfoxcat/air-ferry/releases/latest";
 
     private CheckBox cbSaveLocal;
     private CheckBox cbUploadCloud;
@@ -100,10 +101,12 @@ public class SettingsFragment extends Fragment {
         SharedPreferences prefs = requireActivity()
                 .getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
 
-        // Language
+        // Language — 未手动设置时跟随系统语言
         RadioGroup rgLanguage = view.findViewById(R.id.rg_language);
-        String lang = prefs.getString("language", "zh");
-        rgLanguage.check("zh".equals(lang) ? R.id.rb_zh : R.id.rb_en);
+        String savedLang = prefs.getString("language", "");
+        final String currentLang = savedLang.isEmpty()
+                ? LocaleHelper.systemLanguage(requireContext()) : savedLang;
+        rgLanguage.check("zh".equals(currentLang) ? R.id.rb_zh : R.id.rb_en);
         rgLanguage.setOnCheckedChangeListener((group, checkedId) -> {
             String newLang;
             if (checkedId == R.id.rb_zh) {
@@ -111,10 +114,10 @@ public class SettingsFragment extends Fragment {
             } else if (checkedId == R.id.rb_en) {
                 newLang = "en";
             } else {
-                newLang = lang;
+                newLang = currentLang;
             }
             AppLogger.get(requireContext()).i(TAG, "Settings changed: language "
-                    + lang + " -> " + newLang);
+                    + currentLang + " -> " + newLang);
             LocaleHelper.setLocale(requireContext(), newLang);
             restartActivity();
         });
@@ -274,13 +277,12 @@ public class SettingsFragment extends Fragment {
             saveLogLauncher.launch(intent);
         });
 
-        // About: show version
+        // 在检查更新卡片标题栏显示当前版本号
         TextView tvVersion = view.findViewById(R.id.tv_version);
         try {
             PackageInfo pi = requireContext().getPackageManager()
                     .getPackageInfo(requireContext().getPackageName(), 0);
-            tvVersion.setText(getString(R.string.settings_about_version) + "  " +
-                    getString(R.string.version_format, pi.versionName));
+            tvVersion.setText(getString(R.string.version_format, pi.versionName));
         } catch (PackageManager.NameNotFoundException ignored) {}
 
         // Open source
@@ -293,70 +295,13 @@ public class SettingsFragment extends Fragment {
         // Check update
         TextView tvUpdateStatus = view.findViewById(R.id.tv_update_status);
         Button btnCheckUpdate = view.findViewById(R.id.btn_check_update);
-        Button btnDownloadUpdate = view.findViewById(R.id.btn_download_update);
-        btnCheckUpdate.setOnClickListener(v -> {
-            tvUpdateStatus.setVisibility(View.VISIBLE);
-            tvUpdateStatus.setText(R.string.update_checking);
-            btnCheckUpdate.setEnabled(false);
-            btnDownloadUpdate.setVisibility(View.GONE);
-            new Thread(() -> {
-                String latestTag = null;
-                String downloadUrl = null;
-                try {
-                    HttpURLConnection conn = (HttpURLConnection) new URL(GITHUB_RELEASES_API).openConnection();
-                    conn.setRequestProperty("Accept", "application/vnd.github+json");
-                    conn.setConnectTimeout(8000);
-                    conn.setReadTimeout(8000);
-                    int code = conn.getResponseCode();
-                    if (code == 200) {
-                        StringBuilder sb = new StringBuilder();
-                        try (BufferedReader br = new BufferedReader(
-                                new InputStreamReader(conn.getInputStream()))) {
-                            String line;
-                            while ((line = br.readLine()) != null) sb.append(line);
-                        }
-                        JSONObject json = new JSONObject(sb.toString());
-                        latestTag = json.optString("tag_name", "");
-                        downloadUrl = json.optString("html_url", "");
-                    }
-                    conn.disconnect();
-                } catch (Exception e) {
-                    AppLogger.get(requireContext()).e(TAG, "Update check error: " + e.getMessage());
-                }
-                final String tag = latestTag;
-                final String dlUrl = downloadUrl;
-                Activity a = getActivity();
-                if (a == null) return;
-                a.runOnUiThread(() -> {
-                    btnCheckUpdate.setEnabled(true);
-                    if (tag == null || tag.isEmpty()) {
-                        tvUpdateStatus.setText(R.string.update_failed);
-                        return;
-                    }
-                    String currentVersion = "v0.0.0";
-                    try {
-                        PackageInfo pi = requireContext().getPackageManager()
-                                .getPackageInfo(requireContext().getPackageName(), 0);
-                        currentVersion = "v" + pi.versionName;
-                    } catch (PackageManager.NameNotFoundException ignored) {}
-                    if (tag.equals(currentVersion)) {
-                        tvUpdateStatus.setText(R.string.update_latest);
-                    } else {
-                        tvUpdateStatus.setText(getString(R.string.update_available, tag));
-                        if (dlUrl != null && !dlUrl.isEmpty()) {
-                            btnDownloadUpdate.setVisibility(View.VISIBLE);
-                            btnDownloadUpdate.setTag(dlUrl);
-                        }
-                    }
-                });
-            }).start();
-        });
-        btnDownloadUpdate.setOnClickListener(v -> {
-            Object tag = v.getTag();
-            if (tag instanceof String) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse((String) tag)));
-            }
-        });
+        btnCheckUpdate.setOnClickListener(v -> performUpdateCheck(tvUpdateStatus, btnCheckUpdate));
+
+        // Auto-trigger update check when launched from shortcut
+        if (requireActivity().getIntent().getBooleanExtra("trigger_update", false)) {
+            requireActivity().getIntent().removeExtra("trigger_update");
+            btnCheckUpdate.post(() -> performUpdateCheck(tvUpdateStatus, btnCheckUpdate));
+        }
 
         return view;
     }
@@ -435,6 +380,115 @@ public class SettingsFragment extends Fragment {
         } catch (Exception e) {
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void performUpdateCheck(TextView tvUpdateStatus, Button btnCheckUpdate) {
+        tvUpdateStatus.setVisibility(View.VISIBLE);
+        tvUpdateStatus.setText(R.string.update_checking);
+        btnCheckUpdate.setEnabled(false);
+
+        new Thread(() -> {
+            String latestTag = null;
+            String downloadUrl = null;
+            String errorMsg = null;
+            try {
+                HttpURLConnection conn = (HttpURLConnection) new URL(GITHUB_RELEASES_API).openConnection();
+                conn.setRequestProperty("Accept", "application/vnd.github+json");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+                int code = conn.getResponseCode();
+                if (code == 200) {
+                    StringBuilder sb = new StringBuilder();
+                    try (BufferedReader br = new BufferedReader(
+                            new InputStreamReader(conn.getInputStream()))) {
+                        String line;
+                        while ((line = br.readLine()) != null) sb.append(line);
+                    }
+                    JSONObject json = new JSONObject(sb.toString());
+                    latestTag = json.optString("tag_name", "");
+                    // 优先使用 APK 资源下载链接，回退到 release 页面
+                    downloadUrl = json.optString("html_url", "");
+                    JSONArray assets = json.optJSONArray("assets");
+                    if (assets != null) {
+                        for (int i = 0; i < assets.length(); i++) {
+                            JSONObject asset = assets.getJSONObject(i);
+                            String name = asset.optString("name", "");
+                            if (name.endsWith(".apk")) {
+                                downloadUrl = asset.optString("browser_download_url", downloadUrl);
+                                break;
+                            }
+                        }
+                    }
+                } else if (code == 403 || code == 429) {
+                    errorMsg = getString(R.string.update_rate_limited);
+                } else {
+                    errorMsg = getString(R.string.update_http_error, code);
+                }
+                conn.disconnect();
+            } catch (Exception e) {
+                errorMsg = getString(R.string.update_network_error, e.getMessage());
+                AppLogger.get(requireContext()).e(TAG, "Update check error: " + e.getMessage());
+            }
+
+            final String tag = latestTag;
+            final String dlUrl = downloadUrl;
+            final String errMsg = errorMsg;
+            Activity a = getActivity();
+            if (a == null) return;
+            a.runOnUiThread(() -> {
+                btnCheckUpdate.setEnabled(true);
+                if (errMsg != null) {
+                    tvUpdateStatus.setText(errMsg);
+                    return;
+                }
+                if (tag == null || tag.isEmpty()) {
+                    tvUpdateStatus.setText(R.string.update_failed);
+                    return;
+                }
+                String currentVersion = "v0.0.0";
+                try {
+                    PackageInfo pi = requireContext().getPackageManager()
+                            .getPackageInfo(requireContext().getPackageName(), 0);
+                    currentVersion = "v" + pi.versionName;
+                } catch (PackageManager.NameNotFoundException ignored) {}
+
+                if (!isNewerVersion(tag, currentVersion)) {
+                    tvUpdateStatus.setText(R.string.update_latest);
+                } else {
+                    tvUpdateStatus.setText(getString(R.string.update_available, tag));
+                    showUpdateDialog(tag, dlUrl);
+                }
+            });
+        }).start();
+    }
+
+    private void showUpdateDialog(String newVersion, String downloadUrl) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.update_dialog_title)
+                .setMessage(getString(R.string.update_dialog_msg, newVersion))
+                .setPositiveButton(R.string.update_dialog_download, (d, w) -> {
+                    if (downloadUrl != null && !downloadUrl.isEmpty()) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl)));
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private static boolean isNewerVersion(String remoteTag, String localTag) {
+        if (remoteTag.equals(localTag)) return false;
+        // 去掉前缀 'v'
+        String r = remoteTag.startsWith("v") ? remoteTag.substring(1) : remoteTag;
+        String l = localTag.startsWith("v") ? localTag.substring(1) : localTag;
+        String[] rp = r.split("\\.");
+        String[] lp = l.split("\\.");
+        int len = Math.max(rp.length, lp.length);
+        for (int i = 0; i < len; i++) {
+            int rn = i < rp.length ? Integer.parseInt(rp[i]) : 0;
+            int ln = i < lp.length ? Integer.parseInt(lp[i]) : 0;
+            if (rn != ln) return rn > ln;
+        }
+        return false;
     }
 
     private void restartActivity() {

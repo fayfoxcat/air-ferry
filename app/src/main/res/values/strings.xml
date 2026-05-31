@@ -91,13 +91,27 @@
 
     <!-- About / Open Source / Check Update -->
     <string name="settings_about_version">Version</string>
-    <string name="settings_opensource_url">https://github.com/sz-afa/air-ferry</string>
+    <string name="settings_opensource_url">https://github.com/fayfoxcat/air-ferry</string>
     <string name="settings_opensource_btn">Open in browser</string>
     <string name="settings_check_update">Check for updates</string>
     <string name="update_checking">Checking…</string>
     <string name="update_latest">Already up to date</string>
     <string name="update_available">New version: %1$s</string>
-    <string name="update_download">Download</string>
     <string name="update_failed">Failed to check for updates</string>
+    <string name="update_rate_limited">Too many requests, try later</string>
+    <string name="update_http_error">Server error (HTTP %1$d)</string>
+    <string name="update_network_error">Network error: %1$s</string>
+    <string name="update_dialog_title">New Version Available</string>
+    <string name="update_dialog_msg">Version %1$s is available. Download now?</string>
+    <string name="update_dialog_download">Download</string>
+    <string name="update_download">Download</string>
     <string name="native_load_failed">Failed to load native libraries: %1$s</string>
+
+    <!-- App shortcuts -->
+    <string name="shortcut_scan">Scan</string>
+    <string name="shortcut_scan_long">Scan QR code</string>
+    <string name="shortcut_files">Files</string>
+    <string name="shortcut_files_long">Received files</string>
+    <string name="shortcut_update">Update</string>
+    <string name="shortcut_update_long">Check for updates</string>
 </resources>

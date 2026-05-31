@@ -15,25 +15,29 @@ public class LocaleHelper {
     public static void setLocale(Context context, String languageCode) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
         prefs.edit().putString(KEY_LANGUAGE, languageCode).apply();
-        // 语言设置将在下次 Activity 创建时通过 attachBaseContext → applyLocale 生效。
         if (context instanceof Activity) {
             ((Activity) context).recreate();
         }
     }
 
-    /**
-     * 返回一个已应用已保存语言设置的新 Context。
-     * 在 Activity.attachBaseContext() 中调用，用于包装基础 Context。
-     * 使用 createConfigurationContext()——现代的非废弃方式。
-     */
     public static Context applyLocale(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
-        String lang = prefs.getString(KEY_LANGUAGE, "zh");
+        String lang = prefs.getString(KEY_LANGUAGE, "");
+        if (lang.isEmpty()) {
+            lang = systemLanguage(context);
+        }
 
         Locale locale = Locale.forLanguageTag(lang);
         Locale.setDefault(locale);
         Configuration config = new Configuration(context.getResources().getConfiguration());
         config.setLocale(locale);
         return context.createConfigurationContext(config);
+    }
+
+    /** 从系统 Configuration 读取当前首选语言，映射到 zh/en */
+    public static String systemLanguage(Context context) {
+        Locale sys = context.getResources().getConfiguration().getLocales().get(0);
+        String lang = sys.getLanguage();
+        return lang.startsWith("zh") ? "zh" : "en";
     }
 }

@@ -351,7 +351,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- About Card -->
+            <!-- Check Update Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -384,28 +384,68 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/settings_about"
+                            android:text="@string/settings_check_update"
                             android:textSize="15sp"
                             android:textStyle="bold"
                             android:textColor="@color/colorOnSurface" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tv_version"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="@color/tabInactiveColor" />
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/tv_update_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/about_text"
                         android:textSize="13sp"
-                        android:lineSpacingMultiplier="1.4"
                         android:textColor="@color/tabInactiveColor"
+                        android:visibility="gone"
                         android:layout_marginBottom="10dp" />
 
-                    <TextView
-                        android:id="@+id/tv_version"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="13sp"
-                        android:textColor="@color/tabInactiveColor" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
+                        <Button
+                            android:id="@+id/btn_check_update"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:text="@string/settings_check_update"
+                            android:textColor="@color/colorOnPrimary"
+                            android:textSize="13sp"
+                            android:textAllCaps="false"
+                            android:backgroundTint="@color/colorPrimary"
+                            android:stateListAnimator="@null"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp" />
+
+                        <Button
+                            android:id="@+id/btn_download_update"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:text="@string/update_download"
+                            android:textColor="@color/colorOnPrimary"
+                            android:textSize="13sp"
+                            android:textAllCaps="false"
+                            android:backgroundTint="@color/colorPrimary"
+                            android:stateListAnimator="@null"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp"
+                            android:layout_marginStart="12dp"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -472,7 +512,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Check Update Card -->
+            <!-- About Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -505,56 +545,21 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/settings_check_update"
+                            android:text="@string/settings_about"
                             android:textSize="15sp"
                             android:textStyle="bold"
                             android:textColor="@color/colorOnSurface" />
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/tv_update_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@string/about_text"
                         android:textSize="13sp"
+                        android:lineSpacingMultiplier="1.4"
                         android:textColor="@color/tabInactiveColor"
-                        android:visibility="gone"
                         android:layout_marginBottom="10dp" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <Button
-                            android:id="@+id/btn_check_update"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:text="@string/settings_check_update"
-                            android:textColor="@color/colorOnPrimary"
-                            android:textSize="13sp"
-                            android:textAllCaps="false"
-                            android:backgroundTint="@color/colorPrimary"
-                            android:stateListAnimator="@null"
-                            android:paddingLeft="20dp"
-                            android:paddingRight="20dp" />
-
-                        <Button
-                            android:id="@+id/btn_download_update"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:text="@string/update_download"
-                            android:textColor="@color/colorOnPrimary"
-                            android:textSize="13sp"
-                            android:textAllCaps="false"
-                            android:backgroundTint="@color/colorPrimary"
-                            android:stateListAnimator="@null"
-                            android:paddingLeft="20dp"
-                            android:paddingRight="20dp"
-                            android:layout_marginStart="12dp"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

@@ -91,13 +91,27 @@
 
     <!-- About / Open Source / Check Update -->
     <string name="settings_about_version">版本</string>
-    <string name="settings_opensource_url">https://github.com/sz-afa/air-ferry</string>
+    <string name="settings_opensource_url">https://github.com/fayfoxcat/air-ferry</string>
     <string name="settings_opensource_btn">在浏览器中打开</string>
     <string name="settings_check_update">检查更新</string>
     <string name="update_checking">检查中…</string>
     <string name="update_latest">已是最新版本</string>
     <string name="update_available">发现新版本：%1$s</string>
-    <string name="update_download">下载</string>
     <string name="update_failed">检查更新失败</string>
+    <string name="update_rate_limited">请求过于频繁，请稍后再试</string>
+    <string name="update_http_error">服务器错误 (HTTP %1$d)</string>
+    <string name="update_network_error">网络错误: %1$s</string>
+    <string name="update_dialog_title">发现新版本</string>
+    <string name="update_dialog_msg">版本 %1$s 已发布，是否立即下载？</string>
+    <string name="update_dialog_download">立即下载</string>
+    <string name="update_download">下载</string>
     <string name="native_load_failed">原生库加载失败: %1$s</string>
+
+    <!-- App shortcuts -->
+    <string name="shortcut_scan">扫一扫</string>
+    <string name="shortcut_scan_long">扫描二维码接收文件</string>
+    <string name="shortcut_files">文件列表</string>
+    <string name="shortcut_files_long">查看已接收的文件</string>
+    <string name="shortcut_update">检查更新</string>
+    <string name="shortcut_update_long">检查应用新版本</string>
 </resources>
