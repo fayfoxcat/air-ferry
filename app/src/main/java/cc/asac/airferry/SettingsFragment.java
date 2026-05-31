@@ -463,16 +463,35 @@ public class SettingsFragment extends Fragment {
     }
 
     private void showUpdateDialog(String newVersion, String downloadUrl) {
-        new AlertDialog.Builder(requireContext())
-                .setTitle(R.string.update_dialog_title)
-                .setMessage(getString(R.string.update_dialog_msg, newVersion))
-                .setPositiveButton(R.string.update_dialog_download, (d, w) -> {
-                    if (downloadUrl != null && !downloadUrl.isEmpty()) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl)));
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+        View dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_update, null);
+        TextView tvTitle = dialogView.findViewById(R.id.update_dialog_title);
+        TextView tvMessage = dialogView.findViewById(R.id.update_dialog_message);
+        TextView btnCancel = dialogView.findViewById(R.id.btn_update_cancel);
+        TextView btnDownload = dialogView.findViewById(R.id.btn_update_download);
+
+        tvTitle.setText(R.string.update_dialog_title);
+        tvMessage.setText(getString(R.string.update_dialog_msg, newVersion));
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnDownload.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (downloadUrl != null && !downloadUrl.isEmpty()) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl)));
+            }
+        });
+
+        dialog.show();
     }
 
     private static boolean isNewerVersion(String remoteTag, String localTag) {

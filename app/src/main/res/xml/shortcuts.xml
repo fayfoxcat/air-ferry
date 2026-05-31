@@ -5,7 +5,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_shortcut_scan"
         android:shortcutShortLabel="@string/shortcut_scan"
-        android:shortcutLongLabel="@string/shortcut_scan_long">
+        android:shortcutLongLabel="@string/shortcut_scan">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="cc.asac.airferry"
@@ -20,7 +20,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_shortcut_files"
         android:shortcutShortLabel="@string/shortcut_files"
-        android:shortcutLongLabel="@string/shortcut_files_long">
+        android:shortcutLongLabel="@string/shortcut_files">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="cc.asac.airferry"
@@ -35,7 +35,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_shortcut_update"
         android:shortcutShortLabel="@string/shortcut_update"
-        android:shortcutLongLabel="@string/shortcut_update_long">
+        android:shortcutLongLabel="@string/shortcut_update">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="cc.asac.airferry"
