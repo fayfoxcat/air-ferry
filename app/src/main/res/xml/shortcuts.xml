@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="scan"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_scan"
+        android:shortcutShortLabel="@string/shortcut_scan"
+        android:shortcutLongLabel="@string/shortcut_scan_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="cc.asac.airferry"
+            android:targetClass="cc.asac.airferry.MainActivity">
+            <extra
+                android:name="open_tab"
+                android:value="receiver" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="files"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_files"
+        android:shortcutShortLabel="@string/shortcut_files"
+        android:shortcutLongLabel="@string/shortcut_files_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="cc.asac.airferry"
+            android:targetClass="cc.asac.airferry.MainActivity">
+            <extra
+                android:name="open_tab"
+                android:value="files" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="check_update"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_update"
+        android:shortcutShortLabel="@string/shortcut_update"
+        android:shortcutLongLabel="@string/shortcut_update_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="cc.asac.airferry"
+            android:targetClass="cc.asac.airferry.MainActivity">
+            <extra
+                android:name="open_tab"
+                android:value="settings" />
+            <extra
+                android:name="trigger_update"
+                android:value="true" />
+        </intent>
+    </shortcut>
+</shortcuts>
